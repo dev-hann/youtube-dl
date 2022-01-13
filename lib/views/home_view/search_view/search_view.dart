@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:youtube_dl/views/home_view/search_view/src/search_card_view.dart';
 
 import 'search_view_model.dart';
 
@@ -10,8 +11,12 @@ class SearchView extends StatefulWidget {
   _SearchViewState createState() => _SearchViewState();
 }
 
-class _SearchViewState extends State<SearchView> {
+class _SearchViewState extends State<SearchView>
+    with AutomaticKeepAliveClientMixin {
   final SearchViewModel _viewModel = SearchViewModel();
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
@@ -20,13 +25,22 @@ class _SearchViewState extends State<SearchView> {
   }
 
   Widget _textField() {
+    Widget _submitButton() {
+      return ElevatedButton(
+        onPressed: _viewModel.onTapSearch,
+        child: const Text("search"),
+      );
+    }
+
     return Row(
       children: [
-        TextField(
-          controller: _viewModel.searchController,
-          onSubmitted: (_) {
-            _viewModel.onTapSearch();
-          },
+        Expanded(
+          child: TextField(
+            controller: _viewModel.searchController,
+            onSubmitted: (_) {
+              _viewModel.onTapSearch();
+            },
+          ),
         ),
         const SizedBox(width: 16),
         _submitButton(),
@@ -34,19 +48,16 @@ class _SearchViewState extends State<SearchView> {
     );
   }
 
-  Widget _submitButton() {
-    return ElevatedButton(
-      onPressed: _viewModel.onTapSearch,
-      child: const Text("search"),
-    );
-  }
-
   Widget _body() {
     Widget _listView() {
       return ListView.builder(
-        itemCount: _viewModel.resultList.length,
-        itemBuilder: (_,index){
-          return Text("$index");
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        itemCount: _viewModel.items.length,
+        itemBuilder: (_, index) {
+          return SearchCardView(
+            item: _viewModel.items[index],
+            onTapDown: _viewModel.onTapDown,
+          );
         },
       );
     }
@@ -66,13 +77,19 @@ class _SearchViewState extends State<SearchView> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        children: [
-          _textField(),
-          _body(),
-        ],
+    super.build(context);
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).requestFocus(FocusNode());
+      },
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            _textField(),
+            Expanded(child: _body()),
+          ],
+        ),
       ),
     );
   }

@@ -9,8 +9,8 @@ class SearchResult {
 
   Map<String, dynamic> toMap() {
     return {
-      'nextPageToken': this.nextPageToken,
-      'items': this.items.map((e) => e.toMap()).toList(),
+      'nextPageToken': nextPageToken,
+      'items': items.map((e) => e.toMap()).toList(),
     };
   }
 
@@ -37,10 +37,10 @@ class ResultItem {
 
   Map<String, dynamic> toMap() {
     return {
-      'videoId': this.videoId,
-      'publishedAt': this.publishedAt,
-      'title': this.title,
-      'description': this.description,
+      'videoId': videoId,
+      'publishedAt': publishedAt,
+      'title': title,
+      'description': description,
     };
   }
 
@@ -48,7 +48,7 @@ class ResultItem {
     Map<String, dynamic> map = Map<String, dynamic>.from(_map);
     return ResultItem(
       videoId: map['id']['videoId'] as String,
-      publishedAt: map['snippet']['publishedAt'] as DateTime,
+      publishedAt: DateTime.parse(map['snippet']['publishedAt']),
       title: map['snippet']['title'] as String,
       description: map['snippet']['description'] as String,
     );
