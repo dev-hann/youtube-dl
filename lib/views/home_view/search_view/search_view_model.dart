@@ -12,11 +12,17 @@ class SearchViewModel {
 
   ConnectionState get state => _state.value;
 
+  final RxBool _loading = true.obs;
+
+  bool get isLoading => _loading.value && _downController.isLoading;
+
   void init() async {
     _useCase = SearchUseCase(SearchImpl());
+    _loading(false);
   }
 
   final TextEditingController searchController = TextEditingController();
+  final FocusNode searchFocus = FocusNode();
 
   String get searchText => searchController.text;
 
@@ -31,6 +37,9 @@ class SearchViewModel {
 
   void onTapSearch() async {
     if (state == ConnectionState.waiting) return;
+    _state(ConnectionState.waiting);
+    searchFocus.unfocus();
+
     final _res = await _useCase.search(searchText);
     _result(_res);
     _state(ConnectionState.done);

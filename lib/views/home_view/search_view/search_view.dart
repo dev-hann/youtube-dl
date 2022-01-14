@@ -37,6 +37,7 @@ class _SearchViewState extends State<SearchView>
         Expanded(
           child: TextField(
             controller: _viewModel.searchController,
+            focusNode: _viewModel.searchFocus,
             onSubmitted: (_) {
               _viewModel.onTapSearch();
             },
@@ -63,6 +64,7 @@ class _SearchViewState extends State<SearchView>
     }
 
     return Obx(() {
+      if (_viewModel.isLoading) return SizedBox();
       switch (_viewModel.state) {
         case ConnectionState.none:
           return SizedBox();
