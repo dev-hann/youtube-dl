@@ -11,13 +11,13 @@ class DownService extends YoutubeConnection {
     return baseURL + "/audio/$videoId";
   }
 
-  Future audio(String videoId, ProgressCallback onReceiveProgress) async {
+  Future<Response> audio(
+      String videoId, ProgressCallback onReceiveProgress) async {
     final Response _res = await get(_getAudioURL(videoId));
     final _downObj = DownResult.fromMap(_res);
     if (!_downObj.result) {
       print("error => ${_downObj.data}");
     }
-    final downloadResult =
-        await get(_res.data, onReceiveProgress: onReceiveProgress);
+    return await get(_res.data, onReceiveProgress: onReceiveProgress);
   }
 }

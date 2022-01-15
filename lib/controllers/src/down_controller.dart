@@ -1,5 +1,5 @@
-import 'package:dio/dio.dart';
 import 'package:get/get.dart';
+import 'package:youtube_dl/models/youtube-dl.dart';
 import 'package:youtube_dl/repos/down_repo/src/down_impl.dart';
 import 'package:youtube_dl/use_cases/down_use_case/down_use_case.dart';
 
@@ -8,6 +8,7 @@ class DownController extends GetxService {
 
   late DownUseCase _useCase;
 
+  @override
   void onReady() {
     _init();
     super.onReady();
@@ -24,6 +25,10 @@ class DownController extends GetxService {
   }
 
   Future downAudio(String videoId) async {
+    final _tmpYoutubeDl = YoutubeDl(
+      videoId: videoId,
+      title: "hello",
+    );
     print("down$videoId");
   }
 }
