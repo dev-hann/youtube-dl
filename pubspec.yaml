@@ -16,6 +16,7 @@ dependencies:
   ionicons: ^0.1.2
   firebase_core: ^1.11.0
   cloud_firestore:
+  path_provider:
 dev_dependencies:
   flutter_test:
     sdk: flutter

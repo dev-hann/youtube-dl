@@ -1,15 +1,19 @@
-class YoutubeDl{
-  const YoutubeDl({
+class YoutubeDl {
+  YoutubeDl({
     required this.videoId,
-    required this.title,
+    this.title,
+    this.path,
   });
 
   final String videoId;
-  final String title;
+  String? title;
+  String? path;
+
   Map<String, dynamic> toMap() {
     return {
       'videoId': videoId,
-      'title':title,
+      'title': title,
+      'path': path,
     };
   }
 
@@ -17,6 +21,7 @@ class YoutubeDl{
     return YoutubeDl(
       videoId: map['videoId'] as String,
       title: map['title'],
+      path: map['path'],
     );
   }
 }

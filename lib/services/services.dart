@@ -7,12 +7,31 @@ abstract class YoutubeConnection {
     return await _dio.post(url, queryParameters: data);
   }
 
-  Future<Response> get(String url,
-      {Map<String, dynamic>? data, ProgressCallback? onReceiveProgress}) async {
+  Future<Response> download(
+    String uri,
+    String savePath, {
+    ProgressCallback? onReceiveProgress,
+    CancelToken? cancelToken,
+  }) async {
+    return await _dio.download(
+      uri,
+      savePath,
+      onReceiveProgress: onReceiveProgress,
+      cancelToken: cancelToken,
+    );
+  }
+
+  Future<Response> get(
+    String url, {
+    Map<String, dynamic>? data,
+    ProgressCallback? onReceiveProgress,
+    Options? options,
+  }) async {
     return await _dio.get(
       url,
       queryParameters: data,
       onReceiveProgress: onReceiveProgress,
+      options: options,
     );
   }
 }

@@ -1,3 +1,5 @@
+import 'package:youtube_dl/models/youtube-dl.dart';
+
 class SearchResult {
   const SearchResult({
     required this.nextPageToken,
@@ -52,5 +54,11 @@ class ResultItem {
       title: map['snippet']['title'] as String,
       description: map['snippet']['description'] as String,
     );
+  }
+}
+
+extension ItemMapper on ResultItem {
+  YoutubeDl get toYoutubeDl {
+    return YoutubeDl(videoId: videoId, title: title);
   }
 }
