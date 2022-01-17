@@ -14,6 +14,8 @@ class DownController extends GetxService {
     super.onReady();
   }
 
+  final RxList<YoutubeDl> dlList = <YoutubeDl>[].obs;
+
   final RxBool _loading = true.obs;
 
   bool get isLoading => _loading.value;
@@ -24,11 +26,31 @@ class DownController extends GetxService {
     _loading(false);
   }
 
-  Future downAudio(String videoId) async {
-    final _tmpYoutubeDl = YoutubeDl(
-      videoId: videoId,
-      title: "hello",
-    );
-    print("down$videoId");
+  final RxMap<String, double> progressMap = <String, double>{}.obs;
+
+  Future downAudio(YoutubeDl dl) async {
+    await _useCase.downloadAudio(dl, (count, total) {
+      final _progress = count / total;
+      _updateProgress(dl.videoId, _progress);
+      if (_progress == 1) {
+        _addDl(dl);
+      }
+    });
+  }
+
+  Future<void> stopDownloadAudio(String videoId) async {
+    _useCase.stopDownloadAudio(videoId);
+    await Future.delayed(1.seconds);
+    progressMap.remove(videoId);
+  }
+
+  void _updateProgress(String key, double progress) {
+    progressMap[key] = progress;
+  }
+
+  void _addDl(YoutubeDl dl) {
+    if (!dlList.contains(dl)) {
+      dlList.add(dl);
+    }
   }
 }

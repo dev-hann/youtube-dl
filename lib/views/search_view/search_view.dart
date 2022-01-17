@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:youtube_dl/views/home_view/search_view/src/search_card_view.dart';
 
 import 'search_view_model.dart';
+import 'src/search_card_view.dart';
 
 class SearchView extends StatefulWidget {
   const SearchView({Key? key}) : super(key: key);
@@ -55,10 +55,16 @@ class _SearchViewState extends State<SearchView>
         padding: const EdgeInsets.symmetric(vertical: 16),
         itemCount: _viewModel.items.length,
         itemBuilder: (_, index) {
-          return SearchCardView(
-            item: _viewModel.items[index],
-            onTapDown: _viewModel.onTapDown,
-          );
+          final _item = _viewModel.items[index];
+          return Obx(() {
+            return SearchCardView(
+              item: _item,
+              onTapDown: _viewModel.onTapDown,
+              onTapPlay: _viewModel.onTapPlay,
+              onTapStop: _viewModel.onTapStop,
+              progress: _viewModel.progress(_item.videoId),
+            );
+          });
         },
       );
     }

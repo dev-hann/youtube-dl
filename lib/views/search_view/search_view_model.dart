@@ -45,7 +45,23 @@ class SearchViewModel {
     _state(ConnectionState.done);
   }
 
-  void onTapDown(String videoId) {
-    _downController.downAudio(videoId);
+  double? progress(String videoId) {
+    if (_downController.dlList
+        .map((element) => element.videoId)
+        .contains(videoId)) {
+      return 1;
+    }
+    return _downController.progressMap[videoId];
+  }
+
+  Future<void> onTapDown(ResultItem item) async {
+    final _tmpDl = item.toYoutubeDl;
+    await _downController.downAudio(_tmpDl);
+  }
+
+  void onTapPlay(ResultItem item) {}
+
+  void onTapStop(ResultItem item) {
+    _downController.stopDownloadAudio(item.videoId);
   }
 }

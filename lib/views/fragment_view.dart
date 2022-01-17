@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:youtube_dl/views/home_view/home_view.dart';
 
-import 'home_view/search_view/search_view.dart';
+import 'search_view/search_view.dart';
 
-class HomeView extends StatelessWidget {
-  const HomeView({Key? key}) : super(key: key);
+class FragmentView extends StatelessWidget {
+  const FragmentView({Key? key}) : super(key: key);
+
 
   AppBar _appBar() {
     return AppBar(title: const Text("youtube-dl"));
@@ -14,11 +16,12 @@ class HomeView extends StatelessWidget {
     return Scaffold(
       appBar: _appBar(),
       body: PageView(
-        children: [
+        children: const [
           SearchView(),
+          HomeView(),
+          
         ],
       ),
     );
   }
 }
-// https://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@github.com/yoehwan/youtube-dl-server.git
