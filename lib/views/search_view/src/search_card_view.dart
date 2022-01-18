@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:youtube_dl/models/search_result.dart';
 import 'package:ionicons/ionicons.dart';
 
-import 'search_head_photo.dart';
+import '../../../widget/Dl_head_photo.dart';
 
 class SearchCardView extends StatelessWidget {
   const SearchCardView({
@@ -58,7 +58,7 @@ class SearchCardView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: ListTile(
-        leading: SearchHeadPhoto(item.videoId),
+        leading: DlHeadPhoto(item.videoId),
         title: Text(
           item.title,
           maxLines: 1,
