@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class SearchHeadPhoto extends StatelessWidget {
-  const SearchHeadPhoto(
+class DlHeadPhoto extends StatelessWidget {
+  const DlHeadPhoto(
     String videoId, {
     Key? key,
     bool hq = false,

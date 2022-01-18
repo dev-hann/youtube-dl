@@ -17,6 +17,7 @@ dependencies:
   firebase_core: ^1.11.0
   cloud_firestore:
   path_provider:
+  just_audio: ^0.9.18
 dev_dependencies:
   flutter_test:
     sdk: flutter
