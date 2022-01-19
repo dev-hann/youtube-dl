@@ -23,8 +23,28 @@ class PlayView extends StatelessWidget {
     });
   }
 
+  Widget _progressBar() {
+    return Obx(() {
+      return Row(
+        children: [
+          Text(_viewModel.currentDurationText),
+          Expanded(
+            child: Slider(
+              value: _viewModel.progress,
+              onChangeStart: _viewModel.onStartSeek,
+              onChanged: _viewModel.onChangeSeek,
+              onChangeEnd: _viewModel.onEndSeek,
+            ),
+          ),
+          Text(_viewModel.totalDurationText),
+        ],
+      );
+    });
+  }
+
   Widget _controlButtons() {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         IconButton(
           onPressed: () {},
@@ -51,6 +71,7 @@ class PlayView extends StatelessWidget {
     return Column(
       children: [
         Expanded(child: _listView()),
+        _progressBar(),
         _controlButtons(),
       ],
     );
