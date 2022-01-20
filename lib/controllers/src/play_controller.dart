@@ -5,6 +5,7 @@ import 'package:just_audio/just_audio.dart';
 import 'package:youtube_dl/models/youtube-dl.dart';
 import 'package:youtube_dl/repos/play_repo/src/play_impl.dart';
 import 'package:youtube_dl/use_cases/play_use_case/play_use_case.dart';
+import 'package:youtube_dl/utils/audio_handler.dart';
 
 class PlayController extends GetxService {
   static PlayController find() => Get.find<PlayController>();
@@ -16,17 +17,18 @@ class PlayController extends GetxService {
 
   @override
   void onReady() {
-    _useCase = PlayUseCase(PlayImpl());
+    _init();
     super.onReady();
   }
 
-  Future setItem(YoutubeDl dl) async {
-    _currentItem(dl);
-    await _useCase.init(
-      dl.path!,
-      onChangedState,
-      onChangedDuration,
-    );
+  final RxBool _loading = true.obs;
+
+  bool get isLoading => _loading.value;
+
+  void _init() async {
+    _useCase = PlayUseCase(PlayImpl());
+    await _useCase.init();
+    _loading(false);
   }
 
   void onChangedState(PlayerState state) {}
@@ -48,9 +50,14 @@ class PlayController extends GetxService {
     _totalMilSec(total);
   }
 
-  Future play() async {
+  Future playCurrent() async {
     if (currentItem == null) return;
     await _useCase.play();
+  }
+
+  Future playItem(YoutubeDl dl) async {
+    _currentItem(dl);
+    await _useCase.play(currentItem);
   }
 
   Future pause() async {

@@ -8,6 +8,8 @@ class PlayViewModel {
   final PlayController _playController = PlayController.find();
   final DownController _dlController = DownController.find();
 
+  bool get isLoading => _playController.isLoading;
+
   List<YoutubeDl> get dlList => _dlController.dlList;
 
   String get totalDurationText =>
@@ -21,14 +23,12 @@ class PlayViewModel {
 
   double get progress => currentDuration / _playController.totalMilSec;
 
-  void onSelectItem(YoutubeDl dl) async {
-    await _playController.setItem(dl);
-    onTapPlay();
+  void onSelectItem(YoutubeDl dl) {
+    _playController.playItem(dl);
   }
 
   void onTapPlay() {
-    if (_playController.currentItem == null) return;
-    _playController.play();
+    _playController.playCurrent();
   }
 
   void onTapPause() {

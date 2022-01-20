@@ -11,6 +11,9 @@ class PlayView extends StatelessWidget {
 
   Widget _listView() {
     return Obx(() {
+      if (_viewModel.isLoading) {
+        return const Center(child: CircularProgressIndicator());
+      }
       return ListView.builder(
         itemCount: _viewModel.dlList.length,
         itemBuilder: (_, index) {

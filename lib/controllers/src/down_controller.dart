@@ -23,6 +23,7 @@ class DownController extends GetxService {
   Future _init() async {
     _useCase = DownUseCase(DownImpl());
     await _useCase.initUseCase();
+    dlList(_useCase.loadDownList());
     _loading(false);
   }
 

@@ -16,6 +16,7 @@ class FragmentView extends StatelessWidget {
     return Scaffold(
       appBar: _appBar(),
       body: PageView(
+        controller: PageController(initialPage: 2),
         children: [
           const SearchView(),
           const HomeView(),

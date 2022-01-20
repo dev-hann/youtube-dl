@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:youtube_dl/models/search_result.dart';
 import 'package:ionicons/ionicons.dart';
 
-import '../../../widget/Dl_head_photo.dart';
+import '../../../widget/dl_head_photo.dart';
 
 class SearchCardView extends StatelessWidget {
   const SearchCardView({

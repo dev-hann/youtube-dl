@@ -11,6 +11,10 @@ class DownUseCase {
     await _repo.initRepo();
   }
 
+  List<YoutubeDl> loadDownList() {
+    return _repo.loadDownList();
+  }
+
   Future downloadAudio(YoutubeDl dl, ProgressCallback onReceiveProgress) async {
     await _repo.downloadAudio(dl, onReceiveProgress);
   }
