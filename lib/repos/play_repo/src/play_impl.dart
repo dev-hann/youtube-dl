@@ -1,22 +1,30 @@
 import 'dart:async';
 
+import 'package:audio_service/audio_service.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:youtube_dl/database/src/down_box.dart';
+import 'package:youtube_dl/models/youtube-dl.dart';
 import 'package:youtube_dl/repos/play_repo/play_repo.dart';
+import 'package:youtube_dl/utils/audio_handler.dart';
 
 class PlayImpl extends PlayRepo {
-  final _player = AudioPlayer();
+  late YoutubeAudioHandler _handler;
+  final DownBox _box = DownBox();
 
-  bool get isPlaying => _player.playing;
+  bool get isPlaying => _handler.isPlaying;
 
   @override
-  Future init(
-    String path,
-    Function(PlayerState state)? onChangedState,
-    Function(int current, int total)? onChangedDuration,
-  ) async {
-    await _player.setFilePath(path);
-    _stateListener(onChangedState);
-    _durationListener(onChangedDuration);
+  Future init() async {
+    await _box.openBox();
+
+    final List<MediaItem> itemList = _box
+        .loadDownList()
+        .map((e) => YoutubeDl.fromMap(e).toMediaItem)
+        .toList();
+
+    _handler = await initAudioHandler(itemList);
+    await _handler.prepare();
+    await _handler.addQueueItems(itemList);
   }
 
   StreamSubscription? _stateSub;
@@ -25,7 +33,7 @@ class PlayImpl extends PlayRepo {
     if (_stateSub != null) {
       _stateSub!.cancel();
     }
-    _stateSub = _player.playerStateStream.listen(onData);
+    // _stateSub = _player.playerStateStream.listen(onData);
   }
 
   StreamSubscription? _durationSub;
@@ -34,34 +42,35 @@ class PlayImpl extends PlayRepo {
     if (_durationSub != null) {
       _durationSub!.cancel();
     }
-    _durationSub = _player.createPositionStream().listen((event) {
-      if (event.inMilliseconds == _player.duration!.inMilliseconds) {
-        stop();
-      }
-      onData!(event.inMilliseconds, _player.duration!.inMilliseconds);
-    });
+    // _durationSub = _player.createPositionStream().listen((event) {
+    //   if (event.inMilliseconds == _player.duration!.inMilliseconds) {
+    //     stop();
+    //   }
+    //   onData!(event.inMilliseconds, _player.duration!.inMilliseconds);
+    // });
   }
 
   @override
-  Future play() async {
-    if (isPlaying) return;
-    await _player.play();
+  Future play([YoutubeDl? dl]) async {
+    if (dl == null) {
+      await _handler.play();
+    } else {
+      await _handler.playMediaItem(dl.toMediaItem);
+    }
   }
 
   @override
   Future pause() async {
-    if (!isPlaying) return null;
-    await _player.pause();
+    _handler.pause();
   }
 
   @override
   Future stop() async {
-    if (!isPlaying) return null;
-    _player.stop();
+    _handler.stop();
   }
 
   @override
   Future seek(int milSec) async {
-    await _player.seek(Duration(milliseconds: milSec));
+    // await _player.seek(Duration(milliseconds: milSec));
   }
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:youtube_dl/models/youtube-dl.dart';
-import 'package:youtube_dl/widget/Dl_head_photo.dart';
+import 'package:youtube_dl/widget/dl_head_photo.dart';
 
 class PlayCardView extends StatelessWidget {
   const PlayCardView({

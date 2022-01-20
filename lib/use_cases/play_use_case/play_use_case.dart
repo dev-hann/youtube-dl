@@ -1,4 +1,5 @@
 import 'package:just_audio/just_audio.dart';
+import 'package:youtube_dl/models/youtube-dl.dart';
 import 'package:youtube_dl/repos/play_repo/play_repo.dart';
 
 class PlayUseCase {
@@ -6,20 +7,12 @@ class PlayUseCase {
 
   final PlayRepo _repo;
 
-  Future init(
-    String path,
-    Function(PlayerState state)? onChangedState,
-    Function(int current, int total)? onChangedDuration,
-  ) async {
-    await _repo.init(
-      path,
-      onChangedState,
-      onChangedDuration,
-    );
+  Future init() async {
+    await _repo.init();
   }
 
-  Future play() async {
-    await _repo.play();
+  Future play([YoutubeDl? dl]) async {
+    await _repo.play(dl);
   }
 
   Future pause() async {
