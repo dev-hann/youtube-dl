@@ -1,5 +1,7 @@
 import 'package:youtube_dl/models/youtube-dl.dart';
 
+import 'youtube.dart';
+
 class SearchResult {
   const SearchResult({
     required this.nextPageToken,
@@ -24,27 +26,18 @@ class SearchResult {
   }
 }
 
-class ResultItem {
+class ResultItem extends Youtube {
   ResultItem({
-    required this.videoId,
-    required this.publishedAt,
-    required this.title,
-    required this.description,
-  });
-
-  final String videoId;
-  final DateTime publishedAt;
-  final String title;
-  final String description;
-
-  Map<String, dynamic> toMap() {
-    return {
-      'videoId': videoId,
-      'publishedAt': publishedAt,
-      'title': title,
-      'description': description,
-    };
-  }
+    required String videoId,
+    required DateTime publishedAt,
+    required String title,
+    required String description,
+  }) : super(
+          videoId: videoId,
+          publishedAt: publishedAt,
+          title: title,
+          description: description,
+        );
 
   factory ResultItem.fromMap(dynamic _map) {
     Map<String, dynamic> map = Map<String, dynamic>.from(_map);
@@ -59,6 +52,11 @@ class ResultItem {
 
 extension ItemMapper on ResultItem {
   YoutubeDl get toYoutubeDl {
-    return YoutubeDl(videoId: videoId, title: title);
+    return YoutubeDl(
+      videoId: videoId,
+      publishedAt: publishedAt,
+      title: title,
+      description: description,
+    );
   }
 }

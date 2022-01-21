@@ -44,11 +44,26 @@ class DownImpl extends DownRepo {
   final Map<String, CancelToken> _tokenMap = {};
 
   @override
+  Future removeAudio(YoutubeDl dl) async {
+    await _removeFile(dl.path);
+    await _removeFile(dl.headPhotoPath);
+  }
+
+  Future _removeFile(String? path) async {
+    if (path == null) return;
+    final _file = File(path);
+    final exist = await _file.exists();
+    if (!exist) return;
+    _file.deleteSync();
+  }
+
+  @override
   Future downloadAudio(YoutubeDl dl, ProgressCallback onReceiveProgress) async {
     final token = CancelToken();
     _tokenMap[dl.videoId] = token;
     final _path = _dir.path + "/download/${dl.videoId}";
     dl.path = _path;
+    dl.headPhotoPath = await downloadHeadPhoto(dl.headPhoto, _path);
     try {
       await _service.downloadAudio(
         dl.videoId,
@@ -63,6 +78,13 @@ class DownImpl extends DownRepo {
       }
     }
     _tokenMap.remove(dl.videoId);
+  }
+
+  @override
+  Future<String> downloadHeadPhoto(String url, String path) async {
+    final imgPath = path + ".jpeg";
+    await _service.download(url, imgPath);
+    return imgPath;
   }
 
   @override
