@@ -7,8 +7,10 @@ class PlayUseCase {
 
   final PlayRepo _repo;
 
-  Future init() async {
-    await _repo.init();
+  Future init({
+    Function(int current, int total)? durationListener,
+  }) async {
+    await _repo.init(durationListener: durationListener);
   }
 
   Future play([YoutubeDl? dl]) async {

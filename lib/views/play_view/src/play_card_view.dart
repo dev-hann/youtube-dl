@@ -13,12 +13,12 @@ class PlayCardView extends StatelessWidget {
   final Function(YoutubeDl item) onTapPlay;
 
   Widget _headPhoto() {
-    return DlHeadPhoto(item.videoId);
+    return DlHeadPhoto(item);
   }
 
   Widget _title() {
     return Text(
-      item.title ?? "",
+      item.title,
       maxLines: 1,
       overflow: TextOverflow.ellipsis,
     );

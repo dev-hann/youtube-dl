@@ -3,9 +3,9 @@ import 'package:youtube_dl/models/youtube-dl.dart';
 
 abstract class PlayRepo {
   Future init(
-    // List<YoutubeDl> dlList,
-    // Function(PlayerState state)? onChangedState,
-    // Function(int current, int total)? onChangedDuration,
+      {
+        Function(int current, int total)? durationListener,
+      }
   );
 
   Future play([YoutubeDl? dl]);

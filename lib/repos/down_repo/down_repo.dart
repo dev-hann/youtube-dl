@@ -6,7 +6,11 @@ abstract class DownRepo {
 
   List<YoutubeDl> loadDownList();
 
+  Future removeAudio(YoutubeDl dl);
+
   Future downloadAudio(YoutubeDl dl, ProgressCallback onReceiveProgress);
+
+  Future downloadHeadPhoto(String url, String path);
 
   void stopDownloadAudio(String videoId);
 }

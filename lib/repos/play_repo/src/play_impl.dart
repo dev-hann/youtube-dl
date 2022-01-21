@@ -14,17 +14,13 @@ class PlayImpl extends PlayRepo {
   bool get isPlaying => _handler.isPlaying;
 
   @override
-  Future init() async {
+  Future init({
+    Function(int current, int total)? durationListener,
+  }) async {
     await _box.openBox();
-
-    final List<MediaItem> itemList = _box
-        .loadDownList()
-        .map((e) => YoutubeDl.fromMap(e).toMediaItem)
-        .toList();
-
-    _handler = await initAudioHandler(itemList);
+    _handler = await initAudioHandler();
     await _handler.prepare();
-    await _handler.addQueueItems(itemList);
+    _durationListener(durationListener);
   }
 
   StreamSubscription? _stateSub;
@@ -42,12 +38,12 @@ class PlayImpl extends PlayRepo {
     if (_durationSub != null) {
       _durationSub!.cancel();
     }
-    // _durationSub = _player.createPositionStream().listen((event) {
-    //   if (event.inMilliseconds == _player.duration!.inMilliseconds) {
-    //     stop();
-    //   }
-    //   onData!(event.inMilliseconds, _player.duration!.inMilliseconds);
-    // });
+    _durationSub = _handler.loadPositionStream().listen((event) {
+      if (event.inMilliseconds == _handler.duration.inMilliseconds) {
+        stop();
+      }
+      onData!(event.inMilliseconds, _handler.duration.inMilliseconds);
+    });
   }
 
   @override

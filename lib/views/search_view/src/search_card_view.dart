@@ -58,7 +58,7 @@ class SearchCardView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: ListTile(
-        leading: DlHeadPhoto(item.videoId),
+        leading: Image.network(item.headPhoto),
         title: Text(
           item.title,
           maxLines: 1,

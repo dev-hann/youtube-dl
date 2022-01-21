@@ -27,8 +27,13 @@ class PlayController extends GetxService {
 
   void _init() async {
     _useCase = PlayUseCase(PlayImpl());
-    await _useCase.init();
+    await _useCase.init(durationListener: _durationListener);
     _loading(false);
+  }
+
+  void _durationListener(int current, int total) {
+    _currentMilSec(current);
+    _totalMilSec(total);
   }
 
   void onChangedState(PlayerState state) {}

@@ -1,9 +1,9 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:just_audio/just_audio.dart';
 
-Future<YoutubeAudioHandler> initAudioHandler(List<MediaItem> items) async {
+Future<YoutubeAudioHandler> initAudioHandler() async {
   return await AudioService.init(
-    builder: () => YoutubeAudioHandler(items),
+    builder: () => YoutubeAudioHandler(),
     config: const AudioServiceConfig(
       androidNotificationChannelId: 'com.youtube_dl.channel.audio',
       androidNotificationChannelName: 'Audio playback',
@@ -14,25 +14,13 @@ Future<YoutubeAudioHandler> initAudioHandler(List<MediaItem> items) async {
 }
 
 class YoutubeAudioHandler extends BaseAudioHandler {
-  YoutubeAudioHandler(this._mediaItemList);
-
-  final List<MediaItem> _mediaItemList;
-
   final AudioPlayer _player = AudioPlayer();
-  final _playlist = ConcatenatingAudioSource(children: []);
 
   bool get isPlaying => _player.playing;
 
-  Future<void> _loadEmptyPlaylist() async {
-    try {
-      await _player.setAudioSource(_playlist);
-    } catch (e) {
-      print("Error: $e");
-    }
-  }
-
   void _notifyAudioHandlerAboutPlaybackEvents() {
     _player.playbackEventStream.listen((PlaybackEvent event) {
+      print(event.toString());
       final playing = _player.playing;
       playbackState.add(playbackState.value.copyWith(
         controls: [
@@ -97,17 +85,16 @@ class YoutubeAudioHandler extends BaseAudioHandler {
   }
 
   void _listenForSequenceStateChanges() {
-    _player.sequenceStateStream.listen((SequenceState? sequenceState) {
-      final sequence = sequenceState?.effectiveSequence;
-      if (sequence == null || sequence.isEmpty) return;
-      final items = sequence.map((source) => source.tag as MediaItem);
-      queue.add(items.toList());
-    });
+    // _player.sequenceStateStream.listen((SequenceState? sequenceState) {
+    //   final sequence = sequenceState?.effectiveSequence;
+    //   if (sequence == null || sequence.isEmpty) return;
+    //   final items = sequence.map((source) => source.tag as MediaItem);
+    //   queue.add(items.toList());
+    // });
   }
 
   @override
   Future<void> prepare() async {
-    await _loadEmptyPlaylist();
     _notifyAudioHandlerAboutPlaybackEvents();
     _listenForDurationChanges();
     _listenForCurrentSongIndexChanges();
@@ -117,24 +104,27 @@ class YoutubeAudioHandler extends BaseAudioHandler {
   @override
   Future<void> addQueueItems(List<MediaItem> mediaItems) async {
     // manage Just Audio
-    final audioSource = mediaItems.map(_createAudioSource);
-    _playlist.addAll(audioSource.toList());
-
+    // final audioSource = mediaItems.map(_createAudioSource);
+    // _playlist.addAll(audioSource.toList());
+    //
     // notify system
-    final newQueue = queue.value..addAll(mediaItems);
-    queue.add(newQueue);
+    // final newQueue = queue.value..addAll(mediaItems);
+    // queue.add(newQueue);
   }
 
-  UriAudioSource _createAudioSource(MediaItem mediaItem) {
-    return AudioSource.uri(
-      Uri.parse(mediaItem.id),
-      tag: mediaItem,
-    );
+  Duration get duration {
+    return _player.duration ?? Duration.zero;
+  }
+
+  Stream<Duration> loadPositionStream() {
+    return _player.createPositionStream();
   }
 
   @override
   Future<void> playMediaItem(MediaItem mediaItem) async {
     await stop();
+    queue.add([mediaItem]);
+
     await _player.setFilePath(mediaItem.id);
     await _player.play();
   }
@@ -156,4 +146,10 @@ class YoutubeAudioHandler extends BaseAudioHandler {
       await _player.stop();
     }
   }
+
+  @override
+  Future<void> seek(Duration position) async {
+    await _player.seek(position);
+  }
+
 }
