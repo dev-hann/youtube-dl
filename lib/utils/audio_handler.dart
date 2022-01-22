@@ -20,7 +20,6 @@ class YoutubeAudioHandler extends BaseAudioHandler {
 
   void _notifyAudioHandlerAboutPlaybackEvents() {
     _player.playbackEventStream.listen((PlaybackEvent event) {
-      print(event.toString());
       final playing = _player.playing;
       playbackState.add(playbackState.value.copyWith(
         controls: [
@@ -101,17 +100,6 @@ class YoutubeAudioHandler extends BaseAudioHandler {
     _listenForSequenceStateChanges();
   }
 
-  @override
-  Future<void> addQueueItems(List<MediaItem> mediaItems) async {
-    // manage Just Audio
-    // final audioSource = mediaItems.map(_createAudioSource);
-    // _playlist.addAll(audioSource.toList());
-    //
-    // notify system
-    // final newQueue = queue.value..addAll(mediaItems);
-    // queue.add(newQueue);
-  }
-
   Duration get duration {
     return _player.duration ?? Duration.zero;
   }
@@ -121,12 +109,10 @@ class YoutubeAudioHandler extends BaseAudioHandler {
   }
 
   @override
-  Future<void> playMediaItem(MediaItem mediaItem) async {
+  Future<void> addQueueItem(MediaItem mediaItem) async {
     await stop();
     queue.add([mediaItem]);
-
     await _player.setFilePath(mediaItem.id);
-    await _player.play();
   }
 
   @override
@@ -151,5 +137,4 @@ class YoutubeAudioHandler extends BaseAudioHandler {
   Future<void> seek(Duration position) async {
     await _player.seek(position);
   }
-
 }

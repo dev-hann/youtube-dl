@@ -15,6 +15,8 @@ class PlayController extends GetxService {
 
   YoutubeDl? get currentItem => _currentItem.value;
 
+  bool get isPlaying => _useCase.isPlaying;
+
   @override
   void onReady() {
     _init();
@@ -55,14 +57,14 @@ class PlayController extends GetxService {
     _totalMilSec(total);
   }
 
-  Future playCurrent() async {
-    if (currentItem == null) return;
-    await _useCase.play();
+  Future setYoutubeDl(YoutubeDl dl) async {
+    _currentItem(dl);
+    await _useCase.setYoutubeDl(dl);
   }
 
-  Future playItem(YoutubeDl dl) async {
-    _currentItem(dl);
-    await _useCase.play(currentItem);
+  Future play() async {
+    if (currentItem == null) return;
+    await _useCase.play();
   }
 
   Future pause() async {
@@ -75,5 +77,10 @@ class PlayController extends GetxService {
 
   Future seek(int milSec) async {
     await _useCase.seek(milSec);
+  }
+
+  Future clearCurrentDl() async {
+    final _dl = currentItem;
+    _currentItem.value = null;
   }
 }

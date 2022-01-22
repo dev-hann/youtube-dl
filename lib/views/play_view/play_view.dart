@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:youtube_dl/views/play_view/src/play_card_view.dart';
@@ -17,9 +18,30 @@ class PlayView extends StatelessWidget {
       return ListView.builder(
         itemCount: _viewModel.dlList.length,
         itemBuilder: (_, index) {
-          return PlayCardView(
-            item: _viewModel.dlList[index],
-            onTapPlay: _viewModel.onSelectItem,
+          return Dismissible(
+            direction: DismissDirection.endToStart,
+            onDismissed: (direction) {
+              print(direction);
+              _viewModel.removeItem(index);
+            },
+            background: const ColoredBox(
+              color: Colors.red,
+              child: Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: Text(
+                    "Delete",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ),
+            ),
+            key: ValueKey(index),
+            child: PlayCardView(
+              item: _viewModel.dlList[index],
+              onTapPlay: _viewModel.onSelectItem,
+            ),
           );
         },
       );

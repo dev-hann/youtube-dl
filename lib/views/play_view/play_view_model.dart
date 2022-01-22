@@ -23,12 +23,13 @@ class PlayViewModel {
 
   double get progress => currentDuration / _playController.totalMilSec;
 
-  void onSelectItem(YoutubeDl dl) {
-    _playController.playItem(dl);
+  void onSelectItem(YoutubeDl dl) async {
+    await _playController.setYoutubeDl(dl);
+    await _playController.play();
   }
 
   void onTapPlay() {
-    _playController.playCurrent();
+    _playController.play();
   }
 
   void onTapPause() {
@@ -51,5 +52,16 @@ class PlayViewModel {
     _seekMode = false;
     await _playController.seek(_seekMilSec.value);
     _seekMilSec(0);
+  }
+
+  Future removeItem(int index) async {
+    final _item = dlList[index];
+    if (_playController.isPlaying) {
+      if (_playController.currentItem == _item) {
+        await _playController.stop();
+        _playController.clearCurrentDl();
+      }
+    }
+    await _dlController.removeDl(dlList[index]);
   }
 }

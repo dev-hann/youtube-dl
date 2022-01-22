@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:audio_service/audio_service.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:youtube_dl/database/src/down_box.dart';
 import 'package:youtube_dl/models/youtube-dl.dart';
@@ -11,6 +10,7 @@ class PlayImpl extends PlayRepo {
   late YoutubeAudioHandler _handler;
   final DownBox _box = DownBox();
 
+  @override
   bool get isPlaying => _handler.isPlaying;
 
   @override
@@ -47,12 +47,13 @@ class PlayImpl extends PlayRepo {
   }
 
   @override
-  Future play([YoutubeDl? dl]) async {
-    if (dl == null) {
+  Future setYoutubeDl(YoutubeDl dl)async{
+    await _handler.addQueueItem(dl.toMediaItem);
+  }
+
+  @override
+  Future play() async {
       await _handler.play();
-    } else {
-      await _handler.playMediaItem(dl.toMediaItem);
-    }
   }
 
   @override
@@ -67,6 +68,8 @@ class PlayImpl extends PlayRepo {
 
   @override
   Future seek(int milSec) async {
-    // await _player.seek(Duration(milliseconds: milSec));
+    await _handler.seek(Duration(milliseconds: milSec));
   }
+
+
 }

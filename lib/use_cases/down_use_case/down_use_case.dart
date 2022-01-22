@@ -22,4 +22,8 @@ class DownUseCase {
   void stopDownloadAudio(String videoId) {
     _repo.stopDownloadAudio(videoId);
   }
+
+  Future removeDl(YoutubeDl dl) async {
+    await _repo.removeAudio(dl);
+  }
 }
