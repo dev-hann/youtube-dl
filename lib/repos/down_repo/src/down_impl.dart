@@ -45,6 +45,7 @@ class DownImpl extends DownRepo {
 
   @override
   Future removeAudio(YoutubeDl dl) async {
+    await _box.removeDown(dl.videoId);
     await _removeFile(dl.path);
     await _removeFile(dl.headPhotoPath);
   }
@@ -74,7 +75,7 @@ class DownImpl extends DownRepo {
       await _box.updateDown(dl);
     } on DioError catch (e) {
       if (CancelToken.isCancel(e)) {
-        print(e.message);
+        // print(e.message);
       }
     }
     _tokenMap.remove(dl.videoId);

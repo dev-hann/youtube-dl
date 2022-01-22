@@ -54,4 +54,9 @@ class DownController extends GetxService {
       dlList.add(dl);
     }
   }
+
+  Future removeDl(YoutubeDl dl) async {
+    await _useCase.removeDl(dl);
+    dlList.remove(dl);
+  }
 }

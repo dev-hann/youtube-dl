@@ -18,7 +18,6 @@ class DlHeadPhoto extends StatelessWidget {
   final BoxFit? fit;
 
   ImageProvider get imageProvider {
-    print(dl.headPhotoPath);
     if (dl.headPhotoPath != null) {
       return FileImage(File(dl.headPhotoPath!));
     }
