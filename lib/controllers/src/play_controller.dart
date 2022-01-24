@@ -5,7 +5,6 @@ import 'package:just_audio/just_audio.dart';
 import 'package:youtube_dl/models/youtube-dl.dart';
 import 'package:youtube_dl/repos/play_repo/src/play_impl.dart';
 import 'package:youtube_dl/use_cases/play_use_case/play_use_case.dart';
-import 'package:youtube_dl/utils/audio_handler.dart';
 
 class PlayController extends GetxService {
   static PlayController find() => Get.find<PlayController>();
@@ -14,8 +13,6 @@ class PlayController extends GetxService {
   final Rxn<YoutubeDl> _currentItem = Rxn();
 
   YoutubeDl? get currentItem => _currentItem.value;
-
-  bool get isPlaying => _useCase.isPlaying;
 
   @override
   void onReady() {
@@ -29,37 +26,80 @@ class PlayController extends GetxService {
 
   void _init() async {
     _useCase = PlayUseCase(PlayImpl());
-    await _useCase.init(durationListener: _durationListener);
+    await _useCase.init();
+    _initPlayerStateListener();
+    _initDurationListener();
+    _initPositionListener();
     _loading(false);
   }
 
-  void _durationListener(int current, int total) {
-    _currentMilSec(current);
-    _totalMilSec(total);
+  /// PlayState Stream
+  final RxBool _playing = false.obs;
+
+  bool get isPlaying => _playing.value;
+
+  late StreamSubscription _playerStateSub;
+
+  void _initPlayerStateListener() {
+    _playerStateSub = _useCase.playerStateStream.listen((event) {
+      _playing(event.playing);
+    });
   }
 
-  void onChangedState(PlayerState state) {}
-  final RxInt _totalMilSec = 0.obs;
-
-  int get totalMilSec {
-    if (_totalMilSec.value == 0) {
-      return 1;
-    }
-    return _totalMilSec.value;
+  void _disposePlayerStateListener() {
+    _playerStateSub.cancel();
   }
 
-  final RxInt _currentMilSec = 0.obs;
+  /// Position Stream
+  final Rx<Duration> _position = Duration.zero.obs;
 
-  int get currentMilSec => _currentMilSec.value;
+  Duration get position => _position.value;
 
-  void onChangedDuration(int current, int total) {
-    _currentMilSec(current);
-    _totalMilSec(total);
+  late StreamSubscription _positionStreamSub;
+
+  void _initPositionListener() {
+    _positionStreamSub = _useCase.positionStream.listen((event) {
+      _position(event);
+    });
+  }
+
+  void _disposePositionListener() {
+    _positionStreamSub.cancel();
+  }
+
+  /// Duration Stream
+  final Rx<Duration> _duration = const Duration(milliseconds: 1).obs;
+
+  Duration get duration => _duration.value;
+
+  late StreamSubscription _durationSub;
+
+  void _initDurationListener() {
+    _durationSub = _useCase.durationStream.listen((event) {
+      if (event == null) {
+        _duration(const Duration(milliseconds: 1));
+        return;
+      } else {
+        _duration(event);
+      }
+    });
+  }
+
+  void _disposeDurationListener() {
+    _durationSub.cancel();
   }
 
   Future setYoutubeDl(YoutubeDl dl) async {
     _currentItem(dl);
     await _useCase.setYoutubeDl(dl);
+  }
+
+  Future playToggle() async {
+    if (isPlaying) {
+      stop();
+      return;
+    }
+    play();
   }
 
   Future play() async {

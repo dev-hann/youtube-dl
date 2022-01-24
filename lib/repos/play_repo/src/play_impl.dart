@@ -14,46 +14,29 @@ class PlayImpl extends PlayRepo {
   bool get isPlaying => _handler.isPlaying;
 
   @override
-  Future init({
-    Function(int current, int total)? durationListener,
-  }) async {
+  Stream<PlayerState> get playerStateStream => _handler.playerStateStream;
+
+  @override
+  Stream<Duration> get positionStream => _handler.positionStream;
+
+  @override
+  Stream<Duration?> get durationStream => _handler.durationStream;
+
+  @override
+  Future init() async {
     await _box.openBox();
     _handler = await initAudioHandler();
     await _handler.prepare();
-    _durationListener(durationListener);
-  }
-
-  StreamSubscription? _stateSub;
-
-  void _stateListener(Function(PlayerState state)? onData) {
-    if (_stateSub != null) {
-      _stateSub!.cancel();
-    }
-    // _stateSub = _player.playerStateStream.listen(onData);
-  }
-
-  StreamSubscription? _durationSub;
-
-  void _durationListener(Function(int current, int total)? onData) {
-    if (_durationSub != null) {
-      _durationSub!.cancel();
-    }
-    _durationSub = _handler.loadPositionStream().listen((event) {
-      if (event.inMilliseconds == _handler.duration.inMilliseconds) {
-        stop();
-      }
-      onData!(event.inMilliseconds, _handler.duration.inMilliseconds);
-    });
   }
 
   @override
-  Future setYoutubeDl(YoutubeDl dl)async{
+  Future setYoutubeDl(YoutubeDl dl) async {
     await _handler.addQueueItem(dl.toMediaItem);
   }
 
   @override
   Future play() async {
-      await _handler.play();
+    await _handler.play();
   }
 
   @override
@@ -70,6 +53,4 @@ class PlayImpl extends PlayRepo {
   Future seek(int milSec) async {
     await _handler.seek(Duration(milliseconds: milSec));
   }
-
-
 }

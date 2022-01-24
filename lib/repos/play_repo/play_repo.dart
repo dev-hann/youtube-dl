@@ -2,11 +2,16 @@ import 'package:just_audio/just_audio.dart';
 import 'package:youtube_dl/models/youtube-dl.dart';
 
 abstract class PlayRepo {
-  get isPlaying;
+  bool get isPlaying;
 
-  Future init({
-    Function(int current, int total)? durationListener,
-  });
+  Stream<PlayerState> get playerStateStream;
+
+  Stream<Duration> get positionStream;
+
+  Stream<Duration?> get durationStream;
+
+  Future init();
+
   Future setYoutubeDl(YoutubeDl dl);
 
   Future play();
@@ -16,5 +21,4 @@ abstract class PlayRepo {
   Future stop();
 
   Future seek(int milSec);
-
 }

@@ -83,30 +83,19 @@ class YoutubeAudioHandler extends BaseAudioHandler {
     });
   }
 
-  void _listenForSequenceStateChanges() {
-    // _player.sequenceStateStream.listen((SequenceState? sequenceState) {
-    //   final sequence = sequenceState?.effectiveSequence;
-    //   if (sequence == null || sequence.isEmpty) return;
-    //   final items = sequence.map((source) => source.tag as MediaItem);
-    //   queue.add(items.toList());
-    // });
-  }
-
   @override
   Future<void> prepare() async {
     _notifyAudioHandlerAboutPlaybackEvents();
     _listenForDurationChanges();
     _listenForCurrentSongIndexChanges();
-    _listenForSequenceStateChanges();
   }
 
-  Duration get duration {
-    return _player.duration ?? Duration.zero;
-  }
+  Stream<PlayerState> get playerStateStream => _player.playerStateStream;
 
-  Stream<Duration> loadPositionStream() {
-    return _player.createPositionStream();
-  }
+  Stream<Duration> get positionStream => _player.createPositionStream();
+
+  Stream<Duration?> get durationStream => _player.durationStream;
+
 
   @override
   Future<void> addQueueItem(MediaItem mediaItem) async {

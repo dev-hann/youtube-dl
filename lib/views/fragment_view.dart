@@ -1,28 +1,52 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:ionicons/ionicons.dart';
 import 'package:youtube_dl/views/home_view/home_view.dart';
 
+import 'fragment_view_model.dart';
 import 'play_view/play_view.dart';
 import 'search_view/search_view.dart';
 
 class FragmentView extends StatelessWidget {
-  const FragmentView({Key? key}) : super(key: key);
+  FragmentView({Key? key}) : super(key: key);
+  final FragmentViewModel _viewModel = FragmentViewModel();
 
-  AppBar _appBar() {
-    return AppBar(title: const Text("youtube-dl"));
+  Widget _bottom() {
+    return Obx(() {
+      return BottomNavigationBar(
+        currentIndex: _viewModel.currentIndex,
+        onTap: _viewModel.jumpPage,
+        items: [
+          BottomNavigationBarItem(
+            icon: Icon(Ionicons.home),
+            label: "Home",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Ionicons.home),
+            label: "Home",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Ionicons.home),
+            label: "Home",
+          ),
+        ],
+      );
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _appBar(),
       body: PageView(
-        controller: PageController(initialPage: 2),
+        physics: const NeverScrollableScrollPhysics(),
+        controller: _viewModel.pageController,
         children: [
+          PlayView(),
           const SearchView(),
           const HomeView(),
-          PlayView(),
         ],
       ),
+      bottomNavigationBar: _bottom(),
     );
   }
 }
