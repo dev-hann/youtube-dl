@@ -1,57 +1,86 @@
-import 'package:get/get_rx/src/rx_types/rx_types.dart';
+import 'package:carousel_slider/carousel_controller.dart';
+import 'package:carousel_slider/carousel_options.dart';
+import 'package:carousel_slider/carousel_state.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:get/get.dart';
 import 'package:youtube_dl/controllers/src/down_controller.dart';
 import 'package:youtube_dl/controllers/src/play_controller.dart';
 import 'package:youtube_dl/models/youtube-dl.dart';
 import 'package:youtube_dl/utils/format.dart';
+import 'package:youtube_dl/views/play_view/src/play_list_view.dart';
 
 class PlayViewModel {
   final PlayController _playController = PlayController.find();
   final DownController _dlController = DownController.find();
-
+  bool get isPlaying=> _playController.isPlaying;
   bool get isLoading => _playController.isLoading;
 
   List<YoutubeDl> get dlList => _dlController.dlList;
 
-  String get totalDurationText =>
-      Format.playerDuration(_playController.totalMilSec);
+  String get durationText => Format.playerDuration(_playController.duration);
 
-  int get currentDuration {
-    return _seekMode ? _seekMilSec.value : _playController.currentMilSec;
+  double get progress {
+    return _playController.position.inMilliseconds /
+        _playController.duration.inMilliseconds;
   }
 
-  String get currentDurationText => Format.playerDuration(currentDuration);
+  String get positionText {
+    if (!_seekMode) {
+      return Format.playerDuration(_playController.position);
+    }
+    return Format.playerDuration(Duration(milliseconds: seekNormalized));
+  }
 
-  double get progress => currentDuration / _playController.totalMilSec;
+  /// pageController
+  final CarouselController controller = CarouselController();
+  int currentPage = 0;
+
+  void onChangedPage(int page, CarouselPageChangedReason reason) {
+    currentPage = page;
+  }
+
+  void jumpNexPage() {
+    controller.jumpToPage(currentPage + 1);
+  }
 
   void onSelectItem(YoutubeDl dl) async {
     await _playController.setYoutubeDl(dl);
     await _playController.play();
   }
 
-  void onTapPlay() {
-    _playController.play();
-  }
+  /// Button Handel
+  YoutubeDl get currentItem => dlList[currentPage];
 
-  void onTapPause() {
-    _playController.pause();
+  YoutubeDl? get playingItem => _playController.currentItem;
+
+  Future<void> onTapPlay() async {
+    if (playingItem == currentItem) {
+      _playController.playToggle();
+    } else {
+      await _playController.setYoutubeDl(currentItem);
+      _playController.play();
+    }
   }
 
   bool _seekMode = false;
-  final RxInt _seekMilSec = 0.obs;
+  final RxDouble _seekPercent = 0.0.obs;
+
+  int get seekNormalized =>
+      (_playController.duration.inMilliseconds * _seekPercent.value).toInt();
 
   void onStartSeek(double value) {
-    _seekMilSec((_playController.totalMilSec * value).toInt());
+    _seekPercent(value);
     _seekMode = true;
   }
 
   void onChangeSeek(double value) {
-    _seekMilSec((_playController.totalMilSec * value).toInt());
+    _seekPercent(value);
   }
 
   void onEndSeek(double value) async {
     _seekMode = false;
-    await _playController.seek(_seekMilSec.value);
-    _seekMilSec(0);
+    await _playController.seek(seekNormalized);
+    _seekPercent(0);
   }
 
   Future removeItem(int index) async {
@@ -63,5 +92,12 @@ class PlayViewModel {
       }
     }
     await _dlController.removeDl(dlList[index]);
+  }
+
+  void onTapPlayList() {
+    Get.to(
+      () => PlayListView(),
+      transition: Transition.downToUp,
+    );
   }
 }

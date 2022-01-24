@@ -17,6 +17,8 @@ dependencies:
   firebase_core: ^1.11.0
   cloud_firestore:
   path_provider:
+  # UI
+  carousel_slider: ^4.0.0
   #Audio
   just_audio: ^0.9.18
   audio_service: ^0.18.3

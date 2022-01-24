@@ -6,7 +6,6 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:youtube_dl/views/fragment_view.dart';
 import 'controllers/controllers.dart';
 
-
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
@@ -22,11 +21,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Youtube-dl',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const FragmentView(),
+      home: FragmentView(),
     );
   }
 }

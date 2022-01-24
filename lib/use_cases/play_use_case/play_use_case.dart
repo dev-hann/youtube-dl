@@ -1,3 +1,4 @@
+import 'package:just_audio/just_audio.dart';
 import 'package:youtube_dl/models/youtube-dl.dart';
 import 'package:youtube_dl/repos/play_repo/play_repo.dart';
 
@@ -6,12 +7,16 @@ class PlayUseCase {
 
   final PlayRepo _repo;
 
-  get isPlaying => _repo.isPlaying;
+  bool get isPlaying => _repo.isPlaying;
 
-  Future init({
-    Function(int current, int total)? durationListener,
-  }) async {
-    await _repo.init(durationListener: durationListener);
+ Stream<PlayerState> get playerStateStream => _repo.playerStateStream;
+
+ Stream<Duration> get positionStream => _repo.positionStream;
+
+ Stream<Duration?> get durationStream=> _repo.durationStream;
+
+  Future init() async {
+    await _repo.init();
   }
 
   Future play() async {
