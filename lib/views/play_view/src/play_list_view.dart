@@ -39,15 +39,33 @@ class PlayListView extends StatelessWidget {
       itemCount: _viewModel.dlList.length,
       itemBuilder: (_, index) {
         final item = _viewModel.dlList[index];
-        return GestureDetector(
+        return Dismissible(
+          direction: DismissDirection.endToStart,
+          onDismissed: _viewModel.onDelete,
+          confirmDismiss: _viewModel.confirmDelete,
+          background: const ColoredBox(
+            color: Colors.redAccent,
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Text(
+                  "Delete",
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ),
+          ),
           key: ValueKey(index),
-          onTap: () {
-            _viewModel.onTapItem(item);
-          },
-          child: Card(
-            child: PlayCardView(
-              item: item,
-              onTapPlay: (item) {},
+          child: GestureDetector(
+            onTap: () {
+              _viewModel.onTapItem(item);
+            },
+            child: Card(
+              child: PlayCardView(
+                item: item,
+                onTapPlay: (item) {},
+              ),
             ),
           ),
         );

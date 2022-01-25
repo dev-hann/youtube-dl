@@ -1,104 +1,38 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:youtube_dl/views/play_view/src/play_card_view.dart';
 import 'package:youtube_dl/widget/dl_head_photo.dart';
 import 'package:youtube_dl/widget/player_icons.dart';
 
 import 'play_view_model.dart';
 
-class PlayView extends StatelessWidget {
-  PlayView({Key? key}) : super(key: key);
+class PlayView extends StatefulWidget {
+  const PlayView({Key? key}) : super(key: key);
+
+  @override
+  _PlayViewState createState() => _PlayViewState();
+}
+
+class _PlayViewState extends State<PlayView> {
   final PlayViewModel _viewModel = PlayViewModel();
 
-  //
-  // Widget _listView() {
-  //   return Obx(() {
-  //     if (_viewModel.isLoading) {
-  //       return const Center(child: CircularProgressIndicator());
-  //     }
-  //     return ListView.builder(
-  //       itemCount: _viewModel.dlList.length,
-  //       itemBuilder: (_, index) {
-  //         return Dismissible(
-  //           direction: DismissDirection.endToStart,
-  //           onDismissed: (direction) {
-  //             print(direction);
-  //             _viewModel.removeItem(index);
-  //           },
-  //           background: const ColoredBox(
-  //             color: Colors.red,
-  //             child: Padding(
-  //               padding: EdgeInsets.all(8.0),
-  //               child: Align(
-  //                 alignment: Alignment.centerRight,
-  //                 child: Text(
-  //                   "Delete",
-  //                   style: TextStyle(color: Colors.white),
-  //                 ),
-  //               ),
-  //             ),
-  //           ),
-  //           key: ValueKey(index),
-  //           child: PlayCardView(
-  //             item: _viewModel.dlList[index],
-  //             onTapPlay: _viewModel.onSelectItem,
-  //           ),
-  //         );
-  //       },
-  //     );
-  //   });
-  // }
-  //
-  // Widget _progressBar() {
-  //   return Obx(() {
-  //     return Row(
-  //       children: [
-  //         Text(_viewModel.currentDurationText),
-  //         Expanded(
-  //           child: Slider(
-  //             value: _viewModel.progress,
-  //             onChangeStart: _viewModel.onStartSeek,
-  //             onChanged: _viewModel.onChangeSeek,
-  //             onChangeEnd: _viewModel.onEndSeek,
-  //           ),
-  //         ),
-  //         Text(_viewModel.totalDurationText),
-  //       ],
-  //     );
-  //   });
-  // }
-  //
-  // Widget _controlButtons() {
-  //   return Row(
-  //     mainAxisAlignment: MainAxisAlignment.center,
-  //     children: [
-  //       IconButton(
-  //         onPressed: () {},
-  //         icon: const Icon(Ionicons.play_back),
-  //       ),
-  //       IconButton(
-  //         onPressed: _viewModel.onTapPlay,
-  //         icon: const Icon(Ionicons.play),
-  //       ),
-  //       IconButton(
-  //         onPressed: _viewModel.onTapPause,
-  //         icon: const Icon(Ionicons.pause),
-  //       ),
-  //       IconButton(
-  //         onPressed: () {},
-  //         icon: const Icon(Ionicons.play_forward),
-  //       )
-  //     ],
-  //   );
-  // }
+  @override
+  void initState() {
+    super.initState();
+    _viewModel.init();
+  }
+
+  @override
+  void dispose() {
+    _viewModel.dispose();
+    super.dispose();
+  }
 
   Widget headPhotoListView() {
     return Obx(() {
       return CarouselSlider.builder(
-        carouselController: _viewModel.controller,
+        carouselController: _viewModel.pageController,
         itemCount: _viewModel.dlList.length,
         itemBuilder: (_, index, __) {
           return DlHeadPhoto(
@@ -118,7 +52,9 @@ class PlayView extends StatelessWidget {
   }
 
   Widget title() {
-    return const Text("Title");
+    return Obx(() {
+      return Text(_viewModel.currentItem.title);
+    });
   }
 
   Widget _progressBar() {
@@ -195,27 +131,30 @@ class PlayView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Align(
-      alignment: const Alignment(0, 0.2),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          headPhotoListView(),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: title(),
-          ),
-          SizedBox(height: Get.height / 10),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: _progressBar(),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: _buttons(),
-          ),
-        ],
-      ),
-    );
+    return Obx(() {
+      if (_viewModel.isLoading) return SizedBox();
+      return Align(
+        alignment: const Alignment(0, 0.2),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            headPhotoListView(),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: title(),
+            ),
+            SizedBox(height: Get.height / 10),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: _progressBar(),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: _buttons(),
+            ),
+          ],
+        ),
+      );
+    });
   }
 }

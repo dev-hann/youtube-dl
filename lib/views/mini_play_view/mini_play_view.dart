@@ -8,14 +8,28 @@ class MiniPlayView extends StatelessWidget {
 
   final MiniPlayViewModel _viewModel = MiniPlayViewModel();
 
+  Widget _progressBar() {
+    return Obx(() {
+      return LinearProgressIndicator(
+        value: _viewModel.progress,
+      );
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      return MiniPlayListTile(
-        dl: _viewModel.currentItem,
-        playState: _viewModel.isPlaying,
-        onTapPlay: _viewModel.onTapPlayButton,
-        isListView: _viewModel.isPlayListView,
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _progressBar(),
+          MiniPlayListTile(
+            dl: _viewModel.currentItem,
+            playState: _viewModel.isPlaying,
+            onTapPlay: _viewModel.onTapPlayButton,
+            isListView: _viewModel.isPlayListView,
+          ),
+        ],
       );
     });
   }

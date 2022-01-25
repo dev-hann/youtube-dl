@@ -13,6 +13,10 @@ class PlayListViewModel {
     await playController.play();
   }
 
-
-
+  void onDelete(_)  {
+    print("!!");
+  }
+  Future<bool> confirmDelete(_)async{
+    return false;
+  }
 }

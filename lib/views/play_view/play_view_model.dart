@@ -1,7 +1,7 @@
+import 'dart:async';
+
 import 'package:carousel_slider/carousel_controller.dart';
 import 'package:carousel_slider/carousel_options.dart';
-import 'package:carousel_slider/carousel_state.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:youtube_dl/controllers/src/down_controller.dart';
 import 'package:youtube_dl/controllers/src/play_controller.dart';
@@ -12,40 +12,60 @@ import 'package:youtube_dl/views/play_view/src/play_list_view.dart';
 class PlayViewModel {
   final PlayController _playController = PlayController.find();
   final DownController _dlController = DownController.find();
-  bool get isPlaying=> _playController.isPlaying;
-  bool get isLoading => _playController.isLoading;
+
+  bool get isPlaying => _playController.isPlaying;
+
+  bool get isLoading => _playController.isLoading && _dlController.isLoading;
 
   List<YoutubeDl> get dlList => _dlController.dlList;
 
   String get durationText => Format.playerDuration(_playController.duration);
 
   double get progress {
+    if (_seekMode.value) return _seekPercent.value;
     return _playController.position.inMilliseconds /
         _playController.duration.inMilliseconds;
   }
 
   String get positionText {
-    if (!_seekMode) {
+    if (!_seekMode.value) {
       return Format.playerDuration(_playController.position);
     }
     return Format.playerDuration(Duration(milliseconds: seekNormalized));
   }
 
   /// pageController
-  final CarouselController controller = CarouselController();
-  int currentPage = 0;
+  ///
 
-  void onChangedPage(int page, CarouselPageChangedReason reason) {
-    currentPage = page;
+  late StreamSubscription _itemChangeSub;
+
+  void init() {
+    _itemChangeSub = _playController.currentItemStream.listen((event) {
+      if (event == null || event == currentItem) return;
+      final index =
+          dlList.indexWhere((element) => element.videoId == event.videoId);
+      pageController.jumpToPage(index);
+    });
   }
 
-  void jumpNexPage() {
-    controller.jumpToPage(currentPage + 1);
+  void dispose() {
+    _itemChangeSub.cancel();
   }
 
-  void onSelectItem(YoutubeDl dl) async {
-    await _playController.setYoutubeDl(dl);
-    await _playController.play();
+  final CarouselController pageController = CarouselController();
+  final RxInt _currentPage = 0.obs;
+
+  int get currentPage => _currentPage.value;
+
+  Future<void> onChangedPage(int page, CarouselPageChangedReason reason) async {
+    _currentPage(page);
+    final _isPlaying = _playController.isPlaying;
+    await _playController.stop();
+    await _playController.setYoutubeDl(currentItem);
+
+    if (_isPlaying) {
+      await _playController.play();
+    }
   }
 
   /// Button Handel
@@ -62,7 +82,7 @@ class PlayViewModel {
     }
   }
 
-  bool _seekMode = false;
+  final RxBool _seekMode = false.obs;
   final RxDouble _seekPercent = 0.0.obs;
 
   int get seekNormalized =>
@@ -70,7 +90,7 @@ class PlayViewModel {
 
   void onStartSeek(double value) {
     _seekPercent(value);
-    _seekMode = true;
+    _seekMode(true);
   }
 
   void onChangeSeek(double value) {
@@ -78,7 +98,7 @@ class PlayViewModel {
   }
 
   void onEndSeek(double value) async {
-    _seekMode = false;
+    _seekMode(false);
     await _playController.seek(seekNormalized);
     _seekPercent(0);
   }
