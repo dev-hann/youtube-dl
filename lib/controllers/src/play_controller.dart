@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:get/get.dart';
-import 'package:just_audio/just_audio.dart';
 import 'package:youtube_dl/models/youtube-dl.dart';
 import 'package:youtube_dl/repos/play_repo/src/play_impl.dart';
 import 'package:youtube_dl/use_cases/play_use_case/play_use_case.dart';
@@ -11,6 +10,8 @@ class PlayController extends GetxService {
 
   late PlayUseCase _useCase;
   final Rxn<YoutubeDl> _currentItem = Rxn();
+
+  Stream<YoutubeDl?> get currentItemStream => _currentItem.stream;
 
   YoutubeDl? get currentItem => _currentItem.value;
 
@@ -59,6 +60,10 @@ class PlayController extends GetxService {
 
   void _initPositionListener() {
     _positionStreamSub = _useCase.positionStream.listen((event) {
+      if (event == duration) {
+        //or loop
+        stop();
+      }
       _position(event);
     });
   }
@@ -123,4 +128,7 @@ class PlayController extends GetxService {
     final _dl = currentItem;
     _currentItem.value = null;
   }
+
+
+
 }

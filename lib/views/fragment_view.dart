@@ -26,8 +26,8 @@ class FragmentView extends StatelessWidget {
             label: "Home",
           ),
           BottomNavigationBarItem(
-            icon: Icon(Ionicons.home),
-            label: "Home",
+            icon: Icon(Ionicons.search),
+            label: "Search",
           ),
         ],
       );

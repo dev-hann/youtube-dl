@@ -11,6 +11,10 @@ class MiniPlayViewModel {
 
   bool get isPlaying => _playController.isPlaying;
 
+  double get progress =>
+      _playController.position.inMilliseconds /
+      _playController.duration.inMilliseconds;
+
   void onTapPlayButton() {
     _playController.playToggle();
   }
