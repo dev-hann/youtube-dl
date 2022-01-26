@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:youtube_dl/models/youtube-dl.dart';
+import 'package:youtube_dl/models/youtube_dl.dart';
 import 'package:youtube_dl/repos/down_repo/src/down_impl.dart';
 import 'package:youtube_dl/use_cases/down_use_case/down_use_case.dart';
 
@@ -15,6 +15,17 @@ class DownController extends GetxService {
   }
 
   final RxList<YoutubeDl> dlList = <YoutubeDl>[].obs;
+
+  List<YoutubeDl> findItemList(List<String> idList){
+    final List<YoutubeDl> res = <YoutubeDl>[];
+    final _list = dlList;
+    for(final item in _list){
+      if(idList.contains(item.videoId)){
+        res.add(item);
+      }
+    }
+    return res;
+  }
 
   final RxBool _loading = true.obs;
 

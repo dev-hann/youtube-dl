@@ -5,7 +5,7 @@ import 'package:carousel_slider/carousel_options.dart';
 import 'package:get/get.dart';
 import 'package:youtube_dl/controllers/src/down_controller.dart';
 import 'package:youtube_dl/controllers/src/play_controller.dart';
-import 'package:youtube_dl/models/youtube-dl.dart';
+import 'package:youtube_dl/models/youtube_dl.dart';
 import 'package:youtube_dl/utils/format.dart';
 import 'package:youtube_dl/views/play_view/src/play_list_view.dart';
 
@@ -61,7 +61,7 @@ class PlayViewModel {
     _currentPage(page);
     final _isPlaying = _playController.isPlaying;
     await _playController.stop();
-    await _playController.setYoutubeDl(currentItem);
+    await _playController.setYoutubeDl(currentItem!);
 
     if (_isPlaying) {
       await _playController.play();
@@ -69,15 +69,24 @@ class PlayViewModel {
   }
 
   /// Button Handel
-  YoutubeDl get currentItem => dlList[currentPage];
+  YoutubeDl? get currentItem {
+    if (dlList.isEmpty) return null;
+    return dlList[currentPage];
+  }
+
+  String get title {
+    if (currentItem == null) return "";
+    return currentItem!.title;
+  }
 
   YoutubeDl? get playingItem => _playController.currentItem;
 
   Future<void> onTapPlay() async {
+    if (currentItem == null) return;
     if (playingItem == currentItem) {
       _playController.playToggle();
     } else {
-      await _playController.setYoutubeDl(currentItem);
+      await _playController.setYoutubeDl(currentItem!);
       _playController.play();
     }
   }

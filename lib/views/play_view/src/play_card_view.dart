@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:youtube_dl/models/youtube-dl.dart';
+import 'package:youtube_dl/models/youtube_dl.dart';
 import 'package:youtube_dl/widget/dl_head_photo.dart';
 import 'package:youtube_dl/widget/youtube_list_tile.dart';
 

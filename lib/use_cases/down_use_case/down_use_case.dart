@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:youtube_dl/models/youtube-dl.dart';
+import 'package:youtube_dl/models/youtube_dl.dart';
 import 'package:youtube_dl/repos/down_repo/down_repo.dart';
 
 class DownUseCase {

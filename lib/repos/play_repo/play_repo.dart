@@ -1,5 +1,6 @@
 import 'package:just_audio/just_audio.dart';
-import 'package:youtube_dl/models/youtube-dl.dart';
+import 'package:youtube_dl/models/play_list.dart';
+import 'package:youtube_dl/models/youtube_dl.dart';
 
 abstract class PlayRepo {
   bool get isPlaying;
@@ -10,7 +11,7 @@ abstract class PlayRepo {
 
   Stream<Duration?> get durationStream;
 
-  Future init();
+  Future initPlayer();
 
   Future setYoutubeDl(YoutubeDl dl);
 
@@ -21,4 +22,12 @@ abstract class PlayRepo {
   Future stop();
 
   Future seek(int milSec);
+
+  /// playList
+  Future initPlayList();
+
+  List<PlayList> loadPlayList();
+
+  Future updatePlayList(PlayList playList);
+
 }

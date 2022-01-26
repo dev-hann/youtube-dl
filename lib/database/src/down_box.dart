@@ -1,5 +1,5 @@
 import 'package:youtube_dl/database/local_box.dart';
-import 'package:youtube_dl/models/youtube-dl.dart';
+import 'package:youtube_dl/models/youtube_dl.dart';
 
 class DownBox extends LocalBox {
   @override

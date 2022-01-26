@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:youtube_dl/models/youtube-dl.dart';
+import 'package:youtube_dl/models/youtube_dl.dart';
 
 abstract class DownRepo {
   Future initRepo();

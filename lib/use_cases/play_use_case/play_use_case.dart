@@ -1,5 +1,6 @@
 import 'package:just_audio/just_audio.dart';
-import 'package:youtube_dl/models/youtube-dl.dart';
+import 'package:youtube_dl/models/play_list.dart';
+import 'package:youtube_dl/models/youtube_dl.dart';
 import 'package:youtube_dl/repos/play_repo/play_repo.dart';
 
 class PlayUseCase {
@@ -9,14 +10,15 @@ class PlayUseCase {
 
   bool get isPlaying => _repo.isPlaying;
 
- Stream<PlayerState> get playerStateStream => _repo.playerStateStream;
+  Stream<PlayerState> get playerStateStream => _repo.playerStateStream;
 
- Stream<Duration> get positionStream => _repo.positionStream;
+  Stream<Duration> get positionStream => _repo.positionStream;
 
- Stream<Duration?> get durationStream=> _repo.durationStream;
+  Stream<Duration?> get durationStream => _repo.durationStream;
 
   Future init() async {
-    await _repo.init();
+    await _repo.initPlayer();
+    await _repo.initPlayList();
   }
 
   Future play() async {
@@ -37,5 +39,14 @@ class PlayUseCase {
 
   Future setYoutubeDl(YoutubeDl dl) async {
     await _repo.setYoutubeDl(dl);
+  }
+
+  /// playList
+  List<PlayList> loadPlayList() {
+    return _repo.loadPlayList();
+  }
+
+  Future updatePlayList(PlayList playList) async {
+    await _repo.updatePlayList(playList);
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:youtube_dl/controllers/src/down_controller.dart';
+import 'package:youtube_dl/controllers/src/play_controller.dart';
 import 'package:youtube_dl/models/search_result.dart';
 import 'package:youtube_dl/repos/search_repo/src/search_impl.dart';
 import 'package:youtube_dl/use_cases/search_use_case/search_use_case.dart';
@@ -54,9 +55,12 @@ class SearchViewModel {
     return _downController.progressMap[videoId];
   }
 
+  final PlayController _playController = PlayController.find();
+
   Future<void> onTapDown(ResultItem item) async {
     final _tmpDl = item.toYoutubeDl;
     await _downController.downAudio(_tmpDl);
+    await _playController.addPlayList(0, _tmpDl.videoId);
   }
 
   void onTapPlay(ResultItem item) {}
