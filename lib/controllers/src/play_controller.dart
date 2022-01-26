@@ -1,7 +1,8 @@
 import 'dart:async';
 
 import 'package:get/get.dart';
-import 'package:youtube_dl/models/youtube-dl.dart';
+import 'package:youtube_dl/models/play_list.dart';
+import 'package:youtube_dl/models/youtube_dl.dart';
 import 'package:youtube_dl/repos/play_repo/src/play_impl.dart';
 import 'package:youtube_dl/use_cases/play_use_case/play_use_case.dart';
 
@@ -31,6 +32,7 @@ class PlayController extends GetxService {
     _initPlayerStateListener();
     _initDurationListener();
     _initPositionListener();
+    _initPLayList();
     _loading(false);
   }
 
@@ -129,6 +131,37 @@ class PlayController extends GetxService {
     _currentItem.value = null;
   }
 
+  /// playList
+  final RxList<PlayList> pLayList = <PlayList>[].obs;
 
+  int _playListIndexWhere(int playListIndex) {
+    return pLayList.indexWhere((element) => element.index == playListIndex);
+  }
 
+  Future _initPLayList() async {
+    final _list = _useCase.loadPlayList();
+    if (_list.isEmpty) {
+      await updatePlayList(PlayList(index: 0, title: "PlayList"));
+      return;
+    }
+    pLayList.addAll(_list);
+  }
+
+  Future updatePlayList(PlayList playList) async {
+    await _useCase.updatePlayList(playList);
+    final index = _playListIndexWhere(playList.index);
+    if (index == -1) {
+      pLayList.add(playList);
+    } else {
+      pLayList[index] = playList;
+    }
+  }
+
+  Future addPlayList(int playListIndex, String videoId) async {
+    final index = _playListIndexWhere(playListIndex);
+    if (index == -1) return;
+    final _playList = pLayList[index];
+    _playList.videoIdList.add(videoId);
+    await updatePlayList(_playList);
+  }
 }

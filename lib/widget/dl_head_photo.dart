@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:youtube_dl/models/youtube-dl.dart';
+import 'package:youtube_dl/models/youtube_dl.dart';
 
 class DlHeadPhoto extends StatelessWidget {
   const DlHeadPhoto(

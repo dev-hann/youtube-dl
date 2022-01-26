@@ -53,7 +53,10 @@ class _PlayViewState extends State<PlayView> {
 
   Widget title() {
     return Obx(() {
-      return Text(_viewModel.currentItem.title);
+      return Text(
+        _viewModel.title,
+        maxLines: 1,
+      );
     });
   }
 

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:youtube_dl/models/youtube-dl.dart';
+import 'package:youtube_dl/models/youtube_dl.dart';
 import 'package:youtube_dl/widget/player_icons.dart';
 import 'package:youtube_dl/widget/youtube_list_tile.dart';
 

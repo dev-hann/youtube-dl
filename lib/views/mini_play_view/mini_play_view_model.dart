@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 import 'package:youtube_dl/controllers/src/play_controller.dart';
-import 'package:youtube_dl/models/youtube-dl.dart';
+import 'package:youtube_dl/models/youtube_dl.dart';
 
 class MiniPlayViewModel {
   final PlayController _playController = PlayController.find();

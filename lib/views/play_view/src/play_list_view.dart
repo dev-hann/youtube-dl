@@ -22,7 +22,7 @@ class PlayListView extends StatelessWidget {
       actions: [
         IconButton(
           onPressed: Get.back,
-          icon: Icon(
+          icon: const Icon(
             Ionicons.close,
             color: Colors.black,
           ),
@@ -32,49 +32,51 @@ class PlayListView extends StatelessWidget {
   }
 
   Widget _listView() {
-    return ReorderableListView.builder(
-      physics: const BouncingScrollPhysics(
-        parent: AlwaysScrollableScrollPhysics(),
-      ),
-      itemCount: _viewModel.dlList.length,
-      itemBuilder: (_, index) {
-        final item = _viewModel.dlList[index];
-        return Dismissible(
-          direction: DismissDirection.endToStart,
-          onDismissed: _viewModel.onDelete,
-          confirmDismiss: _viewModel.confirmDelete,
-          background: const ColoredBox(
-            color: Colors.redAccent,
-            child: Align(
-              alignment: Alignment.centerRight,
-              child: Padding(
-                padding: EdgeInsets.all(16.0),
-                child: Text(
-                  "Delete",
-                  style: TextStyle(color: Colors.white),
+    return Obx(() {
+      return ReorderableListView.builder(
+        physics: const BouncingScrollPhysics(
+          parent: AlwaysScrollableScrollPhysics(),
+        ),
+        itemCount: _viewModel.selectedList.length,
+        itemBuilder: (_, index) {
+          final item = _viewModel.selectedList[index];
+          return Dismissible(
+            direction: DismissDirection.endToStart,
+            onDismissed: _viewModel.onDelete,
+            confirmDismiss: _viewModel.confirmDelete,
+            background: const ColoredBox(
+              color: Colors.redAccent,
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Text(
+                    "Delete",
+                    style: TextStyle(color: Colors.white),
+                  ),
                 ),
               ),
             ),
-          ),
-          key: ValueKey(index),
-          child: GestureDetector(
-            onTap: () {
-              _viewModel.onTapItem(item);
-            },
-            child: Card(
-              child: PlayCardView(
-                item: item,
-                onTapPlay: (item) {},
+            key: ValueKey(index),
+            child: GestureDetector(
+              onTap: () {
+                _viewModel.onTapItem(item);
+              },
+              child: Card(
+                child: PlayCardView(
+                  item: item,
+                  onTapPlay: (item) {},
+                ),
               ),
             ),
-          ),
-        );
-      },
-      onReorder: (oldIndex, newIndex) {
-        print(oldIndex);
-        print(newIndex);
-      },
-    );
+          );
+        },
+        onReorder: (oldIndex, newIndex) {
+          print(oldIndex);
+          print(newIndex);
+        },
+      );
+    });
   }
 
   @override
