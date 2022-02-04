@@ -1,5 +1,5 @@
-class DownResult {
-  const DownResult({
+class DownloadResponse {
+  const DownloadResponse({
     required this.dateTime,
     required this.result,
     required this.data,
@@ -17,9 +17,9 @@ class DownResult {
     };
   }
 
-  factory DownResult.fromMap(dynamic _map) {
+  factory DownloadResponse.fromMap(dynamic _map) {
     Map<String, dynamic> map = Map<String, dynamic>.from(_map);
-    return DownResult(
+    return DownloadResponse(
       dateTime: map['dateTime'] as int,
       result: map['result'] as bool,
       data: map['data'] as String,

@@ -10,4 +10,10 @@ class SearchImpl extends SearchRepo {
   Future<Response> searchAudio(String query) async {
     return await services.searchAudio(query);
   }
+
+  @override
+  Future<Response> videosDuration(List<String> videoIds)async{
+    return await services.videosDuration(videoIds);
+  }
+
 }

@@ -17,4 +17,18 @@ class SearchServices extends YoutubeConnection {
     final _res = await get(baseURL + _searchURL, data: _data);
     return _res;
   }
+
+  final _videoURL = "/youtube/v3/videos";
+  
+  Future videosDuration(List<String>videoIds)async{
+    final _data = {
+      "key":apiKey,
+      "id":videoIds,
+      "part":"contentDetails",
+    };
+    final _res = await get(baseURL+_videoURL,data: _data);
+    return _res;
+  }
+  
+
 }

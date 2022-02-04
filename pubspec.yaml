@@ -13,18 +13,21 @@ dependencies:
     sdk: flutter
   get:
   dio:
-  ionicons: ^0.1.2
   firebase_core: ^1.11.0
   cloud_firestore:
   path_provider:
   # UI
   carousel_slider: ^4.0.0
+  google_fonts: ^2.2.0
   #Audio
   just_audio: ^0.9.18
   audio_service: ^0.18.3
   #DB
   hive: ^2.0.5
   hive_flutter: ^1.1.0
+
+
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -1,40 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
 import 'search_view_model.dart';
 import 'src/search_card_view.dart';
 
-class SearchView extends StatefulWidget {
-  const SearchView({Key? key}) : super(key: key);
+class SearchView extends StatelessWidget {
+  SearchView({Key? key, required String searchTag})
+      : _viewModel = SearchViewModel(searchTag),
+        super(key: key);
 
-  @override
-  _SearchViewState createState() => _SearchViewState();
-}
+  final SearchViewModel _viewModel;
 
-class _SearchViewState extends State<SearchView>
-    with AutomaticKeepAliveClientMixin {
-  final SearchViewModel _viewModel = SearchViewModel();
-
-  @override
-  bool get wantKeepAlive => true;
-
-  @override
-  void initState() {
-    super.initState();
-    _viewModel.init();
-  }
-
-  Widget _textField() {
-    Widget _submitButton() {
-      return ElevatedButton(
-        onPressed: _viewModel.onTapSearch,
-        child: const Text("search"),
-      );
-    }
-
-    return Row(
-      children: [
-        Expanded(
+  AppBar _appBar() {
+    return AppBar(
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      leading: Hero(
+        tag: _viewModel.searchTag,
+        child: const Icon(Icons.search),
+      ),
+      title: Obx(() {
+        return AnimatedOpacity(
+          opacity: _viewModel.appBarOpacity,
+          duration: const Duration(milliseconds: 300),
           child: TextField(
             controller: _viewModel.searchController,
             focusNode: _viewModel.searchFocus,
@@ -42,9 +29,19 @@ class _SearchViewState extends State<SearchView>
               _viewModel.onTapSearch();
             },
           ),
-        ),
-        const SizedBox(width: 16),
-        _submitButton(),
+        );
+      }),
+      actions: [
+        Obx(() {
+          return AnimatedOpacity(
+            opacity: _viewModel.appBarOpacity,
+            duration: const Duration(milliseconds: 300),
+            child: IconButton(
+              onPressed: _viewModel.onTapClose,
+              icon: const Icon(Icons.close),
+            ),
+          );
+        }),
       ],
     );
   }
@@ -62,7 +59,7 @@ class _SearchViewState extends State<SearchView>
               onTapDown: _viewModel.onTapDown,
               onTapPlay: _viewModel.onTapPlay,
               onTapStop: _viewModel.onTapStop,
-              progress: _viewModel.progress(_item.videoId),
+              snapshot: _viewModel.snapshot(_item.videoId),
             );
           });
         },
@@ -70,13 +67,13 @@ class _SearchViewState extends State<SearchView>
     }
 
     return Obx(() {
-      if (_viewModel.isLoading) return SizedBox();
+      if (_viewModel.isLoading) return const SizedBox();
       switch (_viewModel.state) {
         case ConnectionState.none:
-          return SizedBox();
+          return const SizedBox();
         case ConnectionState.waiting:
         case ConnectionState.active:
-          return Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
         case ConnectionState.done:
           return _listView();
       }
@@ -85,18 +82,20 @@ class _SearchViewState extends State<SearchView>
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
-    return GestureDetector(
-      onTap: () {
-        FocusScope.of(context).requestFocus(FocusNode());
-      },
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            _textField(),
-            Expanded(child: _body()),
-          ],
+    return Scaffold(
+      appBar: _appBar(),
+      body: GestureDetector(
+        onTap: () {
+          FocusScope.of(context).requestFocus(FocusNode());
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              // _textField(),
+              Expanded(child: _body()),
+            ],
+          ),
         ),
       ),
     );

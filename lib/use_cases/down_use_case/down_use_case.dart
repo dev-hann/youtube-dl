@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:youtube_dl/enums/download_state.dart';
 import 'package:youtube_dl/models/youtube_dl.dart';
 import 'package:youtube_dl/repos/down_repo/down_repo.dart';
 
@@ -15,8 +16,11 @@ class DownUseCase {
     return _repo.loadDownList();
   }
 
-  Future downloadAudio(YoutubeDl dl, ProgressCallback onReceiveProgress) async {
-    await _repo.downloadAudio(dl, onReceiveProgress);
+  Future<bool> downloadAudio({
+    required YoutubeDl dl,
+    required ProgressState progressState,
+  }) async {
+    return await _repo.downloadAudio(dl, progressState);
   }
 
   void stopDownloadAudio(String videoId) {

@@ -1,4 +1,5 @@
 import 'package:just_audio/just_audio.dart';
+import 'package:youtube_dl/enums/play_repeat_state.dart';
 import 'package:youtube_dl/models/play_list.dart';
 import 'package:youtube_dl/models/youtube_dl.dart';
 import 'package:youtube_dl/repos/play_repo/play_repo.dart';
@@ -18,7 +19,6 @@ class PlayUseCase {
 
   Future init() async {
     await _repo.initPlayer();
-    await _repo.initPlayList();
   }
 
   Future play() async {
@@ -37,16 +37,11 @@ class PlayUseCase {
     await _repo.seek(milSec);
   }
 
-  Future setYoutubeDl(YoutubeDl dl) async {
-    await _repo.setYoutubeDl(dl);
+  Future setPlayList(List<String> videoIdList) async {
+    await _repo.setPlayList(videoIdList);
   }
 
-  /// playList
-  List<PlayList> loadPlayList() {
-    return _repo.loadPlayList();
-  }
-
-  Future updatePlayList(PlayList playList) async {
-    await _repo.updatePlayList(playList);
+  Future playMode(PlayRepeatState repeatState) async {
+    await _repo.setRepeatMode(repeatState);
   }
 }

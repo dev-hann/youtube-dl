@@ -1,11 +1,10 @@
-import 'package:get/get.dart';
 import 'package:youtube_dl/controllers/src/play_controller.dart';
 import 'package:youtube_dl/models/youtube_dl.dart';
+import 'package:youtube_dl/views/play_view/src/play_list_view.dart';
 
 class MiniPlayViewModel {
   final PlayController _playController = PlayController.find();
 
-  bool get isPlayListView => Get.currentRoute == "/PlayListView";
 
   YoutubeDl? get currentItem => _playController.currentItem;
 
@@ -18,4 +17,17 @@ class MiniPlayViewModel {
   void onTapPlayButton() {
     _playController.playToggle();
   }
+
+  void onTapListView() {
+    PlayListView.goToPlayListView();
+  }
+
+  Future onTapForward() async {
+    await _playController.forward();
+  }
+
+  Future onTapBackward() async {
+    await _playController.backward();
+  }
+
 }

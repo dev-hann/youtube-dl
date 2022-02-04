@@ -3,34 +3,27 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:youtube_dl/models/youtube_dl.dart';
 
-class DlHeadPhoto extends StatelessWidget {
-  const DlHeadPhoto(
-    this.dl, {
-    Key? key,
+import '../dl_photo.dart';
+
+class DlHeadPhoto extends DlPhoto {
+  DlHeadPhoto(
+    YoutubeDl dl, {
     this.width,
     this.height,
     this.fit,
-  }) : super(key: key);
+  }) : super(key: ValueKey(dl.videoId), dl: dl);
 
-  final YoutubeDl dl;
   final double? width;
   final double? height;
   final BoxFit? fit;
 
-  ImageProvider get imageProvider {
-    if (dl.headPhotoPath != null) {
-      return FileImage(File(dl.headPhotoPath!));
-    }
-    return NetworkImage(dl.headPhoto);
-  }
-
   @override
-  Widget build(BuildContext context) {
+  Widget image() {
     return Image(
       image: imageProvider,
       width: width,
       height: height,
-      fit: fit,
+      fit: fit ?? BoxFit.cover,
       errorBuilder: (_, __, st) {
         return const Text("imageError");
       },

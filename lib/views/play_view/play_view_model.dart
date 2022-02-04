@@ -2,29 +2,38 @@ import 'dart:async';
 
 import 'package:carousel_slider/carousel_controller.dart';
 import 'package:carousel_slider/carousel_options.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:youtube_dl/controllers/src/down_controller.dart';
+import 'package:youtube_dl/controllers/src/download_controller.dart';
 import 'package:youtube_dl/controllers/src/play_controller.dart';
+import 'package:youtube_dl/controllers/src/play_list_controller.dart';
+import 'package:youtube_dl/enums/play_repeat_state.dart';
+import 'package:youtube_dl/models/play_list.dart';
 import 'package:youtube_dl/models/youtube_dl.dart';
 import 'package:youtube_dl/utils/format.dart';
 import 'package:youtube_dl/views/play_view/src/play_list_view.dart';
 
 class PlayViewModel {
   final PlayController _playController = PlayController.find();
-  final DownController _dlController = DownController.find();
+  final DownloadController _dlController = DownloadController.find();
 
   bool get isPlaying => _playController.isPlaying;
 
-  bool get isLoading => _playController.isLoading && _dlController.isLoading;
+  bool get isLoading => _playController.isLoading || _dlController.isLoading;
 
-  List<YoutubeDl> get dlList => _dlController.dlList;
+  PlayList get playList => _playController.playList;
+
+  List<YoutubeDl> get dlList {
+    return _dlController.findItemList(playList.videoIdList);
+  }
 
   String get durationText => Format.playerDuration(_playController.duration);
 
   double get progress {
     if (_seekMode.value) return _seekPercent.value;
-    return _playController.position.inMilliseconds /
-        _playController.duration.inMilliseconds;
+    return (_playController.position.inMilliseconds /
+            _playController.duration.inMilliseconds)
+        .clamp(0, 1);
   }
 
   String get positionText {
@@ -35,8 +44,6 @@ class PlayViewModel {
   }
 
   /// pageController
-  ///
-
   late StreamSubscription _itemChangeSub;
 
   void init() {
@@ -52,17 +59,19 @@ class PlayViewModel {
     _itemChangeSub.cancel();
   }
 
-  final CarouselController pageController = CarouselController();
+  CarouselControllerImpl get pageController => _playController.pageController;
+
   final RxInt _currentPage = 0.obs;
 
   int get currentPage => _currentPage.value;
 
   Future<void> onChangedPage(int page, CarouselPageChangedReason reason) async {
     _currentPage(page);
+    if (reason == CarouselPageChangedReason.controller) return;
     final _isPlaying = _playController.isPlaying;
+
     await _playController.stop();
     await _playController.setYoutubeDl(currentItem!);
-
     if (_isPlaying) {
       await _playController.play();
     }
@@ -112,21 +121,23 @@ class PlayViewModel {
     _seekPercent(0);
   }
 
-  Future removeItem(int index) async {
-    final _item = dlList[index];
-    if (_playController.isPlaying) {
-      if (_playController.currentItem == _item) {
-        await _playController.stop();
-        _playController.clearCurrentDl();
-      }
-    }
-    await _dlController.removeDl(dlList[index]);
+  void onTapPlayList() {
+    PlayListView.goToPlayListView();
   }
 
-  void onTapPlayList() {
-    Get.to(
-      () => PlayListView(),
-      transition: Transition.downToUp,
-    );
+  Future onTapForward() async {
+    await _playController.forward();
+  }
+
+  Future onTapBackward() async {
+    await _playController.backward();
+  }
+
+  PlayRepeatState get repeatState => _playController.repeatState;
+
+  Future onTapMode() async {
+    final nextIndex = (repeatState.index + 1) % 3;
+    final nextState = PlayRepeatState.values[nextIndex];
+    await _playController.setPlayaRepeatMode(nextState);
   }
 }
