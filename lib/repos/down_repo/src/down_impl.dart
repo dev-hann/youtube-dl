@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:youtube_dl/database/src/down_box.dart';
+import 'package:youtube_dl/enums/download_state.dart';
 import 'package:youtube_dl/models/youtube_dl.dart';
 import 'package:youtube_dl/repos/down_repo/down_repo.dart';
 import 'package:youtube_dl/services/down_service/down_service.dart';
@@ -37,11 +38,10 @@ class DownImpl extends DownRepo {
     await _box.openBox();
   }
 
+  @override
   List<YoutubeDl> loadDownList() {
     return _box.loadDownList().map((e) => YoutubeDl.fromMap(e)).toList();
   }
-
-  final Map<String, CancelToken> _tokenMap = {};
 
   @override
   Future removeAudio(YoutubeDl dl) async {
@@ -58,18 +58,45 @@ class DownImpl extends DownRepo {
     _file.deleteSync();
   }
 
-  @override
-  Future downloadAudio(YoutubeDl dl, ProgressCallback onReceiveProgress) async {
+  /// Cancel Token
+  final Map<String, CancelToken> _cancelTokenMap = {};
+
+  CancelToken updateNewToken(String videoId) {
     final token = CancelToken();
-    _tokenMap[dl.videoId] = token;
-    final _path = _dir.path + "/download/${dl.videoId}";
+    _cancelTokenMap[videoId] = token;
+    return token;
+  }
+
+  void removeCancelToken(String videoId) {
+    _cancelTokenMap.remove(videoId);
+  }
+
+  @override
+  void stopDownloadAudio(String videoId) {
+    if (!_cancelTokenMap.containsKey(videoId)) return;
+    _cancelTokenMap[videoId]!.cancel("User Request Cancel");
+  }
+
+  @override
+  Future<bool> downloadAudio(YoutubeDl dl, ProgressState progressState) async {
+    final videoId = dl.videoId;
+    final token = updateNewToken(dl.videoId);
+
+    final _path = _dir.path + "/download/${videoId}";
     dl.path = _path;
-    dl.headPhotoPath = await downloadHeadPhoto(dl.headPhoto, _path);
+    progressState(DownloadState.loadHeadPhoto, 0);
+    dl.headPhotoPath = await downloadHeadPhoto(dl.headPhotoHQ, _path);
+    progressState(DownloadState.loadRawURL, 0);
+    final rawURL = await _service.youtubeRawURL(videoId);
+
     try {
+      progressState(DownloadState.loadAudio, 0);
       await _service.downloadAudio(
-        dl.videoId,
+        rawURL,
         _path,
-        onReceiveProgress,
+        (current, total) {
+          progressState(DownloadState.loadAudio, current / total);
+        },
         token,
       );
       await _box.updateDown(dl);
@@ -77,8 +104,11 @@ class DownImpl extends DownRepo {
       if (CancelToken.isCancel(e)) {
         // print(e.message);
       }
+      return false;
     }
-    _tokenMap.remove(dl.videoId);
+    removeCancelToken(videoId);
+    progressState(DownloadState.done, 1);
+    return true;
   }
 
   @override
@@ -86,11 +116,5 @@ class DownImpl extends DownRepo {
     final imgPath = path + ".jpeg";
     await _service.download(url, imgPath);
     return imgPath;
-  }
-
-  @override
-  void stopDownloadAudio(String videoId) {
-    if (!_tokenMap.containsKey(videoId)) return;
-    _tokenMap[videoId]!.cancel("User Request Cancel");
   }
 }

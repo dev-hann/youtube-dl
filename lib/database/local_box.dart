@@ -8,4 +8,8 @@ abstract class LocalBox {
   Future openBox() async {
     box = await Hive.openBox(name);
   }
+
+  Future clearBox() async {
+    box.clear();
+  }
 }

@@ -1,9 +1,10 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ionicons/ionicons.dart';
-import 'package:youtube_dl/widget/dl_head_photo.dart';
+import 'package:youtube_dl/widget/dl_image/src/dl_background_photo.dart';
+import 'package:youtube_dl/widget/dl_image/src/dl_head_photo.dart';
 import 'package:youtube_dl/widget/player_icons.dart';
+import 'package:youtube_dl/widget/auto_slide_widget.dart';
 
 import 'play_view_model.dart';
 
@@ -14,7 +15,8 @@ class PlayView extends StatefulWidget {
   _PlayViewState createState() => _PlayViewState();
 }
 
-class _PlayViewState extends State<PlayView> {
+class _PlayViewState extends State<PlayView>
+    with AutomaticKeepAliveClientMixin {
   final PlayViewModel _viewModel = PlayViewModel();
 
   @override
@@ -37,7 +39,7 @@ class _PlayViewState extends State<PlayView> {
         itemBuilder: (_, index, __) {
           return DlHeadPhoto(
             _viewModel.dlList[index],
-            fit: BoxFit.fitWidth,
+            fit: BoxFit.cover,
           );
         },
         options: CarouselOptions(
@@ -53,9 +55,13 @@ class _PlayViewState extends State<PlayView> {
 
   Widget title() {
     return Obx(() {
-      return Text(
-        _viewModel.title,
-        maxLines: 1,
+      return AutoSlideWidget(
+        child: Text(
+          _viewModel.title,
+          maxLines: 1,
+          style: Get.textTheme.headline5,
+          textAlign: TextAlign.center,
+        ),
       );
     });
   }
@@ -91,7 +97,9 @@ class _PlayViewState extends State<PlayView> {
 
   Widget _buttons() {
     Widget _playBack() {
-      return Icon(Ionicons.play_back);
+      return PlayerIcons.playBack(
+        onTap: _viewModel.onTapBackward,
+      );
     }
 
     Widget _play() {
@@ -106,18 +114,22 @@ class _PlayViewState extends State<PlayView> {
     }
 
     Widget _playForward() {
-      return Icon(Ionicons.play_forward);
+      return PlayerIcons.playForward(
+        onTap: _viewModel.onTapForward,
+      );
     }
 
     Widget _list() {
-      return IconButton(
-        onPressed: _viewModel.onTapPlayList,
-        icon: const Icon(Ionicons.list),
+      return PlayerIcons.playList(
+        onTap: _viewModel.onTapPlayList,
       );
     }
 
     Widget _mode() {
-      return Icon(Ionicons.invert_mode);
+      return PlayerIcons.playRepeat(
+        state: _viewModel.repeatState,
+        onTap: _viewModel.onTapMode,
+      );
     }
 
     return Row(
@@ -134,30 +146,37 @@ class _PlayViewState extends State<PlayView> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Obx(() {
-      if (_viewModel.isLoading) return SizedBox();
-      return Align(
-        alignment: const Alignment(0, 0.2),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            headPhotoListView(),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: title(),
-            ),
-            SizedBox(height: Get.height / 10),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: _progressBar(),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: _buttons(),
-            ),
-          ],
+      if (_viewModel.isLoading) return const SizedBox();
+      return DlBackgroundPhoto(
+        dl: _viewModel.currentItem,
+        child: Align(
+          alignment: const Alignment(0, 0.2),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              headPhotoListView(),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: title(),
+              ),
+              SizedBox(height: Get.height / 10),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: _progressBar(),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: _buttons(),
+              ),
+            ],
+          ),
         ),
       );
     });
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

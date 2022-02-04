@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:ionicons/ionicons.dart';
+import 'package:get/get.dart';
+import 'package:youtube_dl/const/color.dart';
+import 'package:youtube_dl/enums/play_repeat_state.dart';
 
 class PlayerIcons {
   static Widget playPause({
@@ -11,6 +13,7 @@ class PlayerIcons {
       child: _AnimationIcon(
         animatedIcons: AnimatedIcons.play_pause,
         state: state,
+        size: 36,
       ),
     );
   }
@@ -18,14 +21,61 @@ class PlayerIcons {
   static Widget playBack({VoidCallback? onTap}) {
     return GestureDetector(
       onTap: onTap,
-      child: const Icon(Ionicons.play_back),
+      child: const Icon(
+        Icons.fast_rewind,
+        size: 36,
+      ),
     );
   }
 
   static Widget playForward({VoidCallback? onTap}) {
     return GestureDetector(
       onTap: onTap,
-      child: const Icon(Ionicons.play_forward),
+      child: const Icon(
+        Icons.fast_forward,
+        size: 36,
+      ),
+    );
+  }
+
+  static Widget playList({VoidCallback? onTap}) {
+    return GestureDetector(
+      onTap: onTap,
+      child: const Icon(
+        Icons.list,
+        size: 36,
+      ),
+    );
+  }
+
+  static Widget playRepeat({
+    VoidCallback? onTap,
+    required PlayRepeatState state,
+  }) {
+    late Icon _icon;
+    switch (state) {
+      case PlayRepeatState.one:
+        _icon = const Icon(Icons.repeat_one);
+        break;
+      case PlayRepeatState.none:
+        _icon = const Icon(
+          Icons.repeat,
+          color: DlGreyColor,
+        );
+        break;
+      case PlayRepeatState.all:
+        _icon = const Icon(Icons.repeat);
+        break;
+      // case PlayRepeatState.group:
+      //   _icon = const Icon(Icons.group);
+      //   break;
+    }
+    return GestureDetector(
+      onTap: onTap,
+      child: IconTheme(
+        data: Get.theme.iconTheme.copyWith(size: 36),
+        child: _icon,
+      ),
     );
   }
 }
@@ -35,12 +85,14 @@ const _animationDuration = Duration(milliseconds: 300);
 class _AnimationIcon extends StatefulWidget {
   const _AnimationIcon({
     Key? key,
+    this.size = 24.0,
     required this.animatedIcons,
     required this.state,
   }) : super(key: key);
 
   final AnimatedIconData animatedIcons;
   final bool state;
+  final double size;
 
   @override
   __AnimationIconState createState() => __AnimationIconState();
@@ -86,6 +138,7 @@ class __AnimationIconState extends State<_AnimationIcon>
     return AnimatedIcon(
       icon: widget.animatedIcons,
       progress: controller,
+      size: widget.size,
     );
   }
 }

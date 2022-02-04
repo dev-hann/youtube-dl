@@ -8,6 +8,9 @@ class SearchUseCase {
 
   Future<SearchResult> search(String query) async {
     final _res = await _repo.searchAudio(query);
-    return SearchResult.fromMap(_res.data);
+    final searchRes = SearchResult.fromMap(_res.data);
+    final durationRes = await _repo.videosDuration(searchRes.videoIdList);
+    searchRes.setDurationList(durationRes.data);
+    return searchRes;
   }
 }

@@ -8,7 +8,7 @@ class PlayList {
 
   final int index;
   String title;
-  final List<String> videoIdList;
+  List<String> videoIdList;
 
   Map<String, dynamic> toMap() {
     return {

@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
+import 'package:youtube_dl/models/download_response.dart';
 import 'package:youtube_dl/services/services.dart';
 
 class DownService extends YoutubeConnection {
@@ -9,22 +12,24 @@ class DownService extends YoutubeConnection {
   String _getAudioURL(String videoId) {
     return baseURL + "/audio/$videoId";
   }
+  ///fix here!! to divide each process
+  Future<DownloadResponse> youtubeRawURL(String videoId) async {
+    final _address = _getAudioURL(videoId);
+    final res = await get(_address);
+    return DownloadResponse.fromMap(jsonDecode(res.data));
+  }
 
   Future<Response> downloadAudio(
-    String videoId,
+    DownloadResponse response,
     String savePath,
     ProgressCallback onReceiveProgress,
     CancelToken cancelToken,
   ) async {
-    // final Response _res = await get(_getAudioURL(videoId));
-    // final _downObj = DownResult.fromMap(_res);
-    // if (!_downObj.result) {
-    //   print("error => ${_downObj.data}");
-    // }
-    const _test =
-        "https://cdn.simplecast.com/audio/d908c540-1607-45ea-89a0-ab43f5641e6c/episodes/625271f9-72a2-4837-8a7f-b3c9212e28ef/audio/3b40a94c-eee1-4980-b2e6-e5078e520fd3/default_tc.mp3?aid=rss_feed&feed=58sckhh4";
+    if (!response.result) {
+      print("error => ${response.data}");
+    }
     return await download(
-      _test,
+      response.data,
       savePath,
       onReceiveProgress: onReceiveProgress,
       cancelToken: cancelToken,

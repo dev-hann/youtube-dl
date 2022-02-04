@@ -1,15 +1,22 @@
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
-import 'package:youtube_dl/controllers/src/down_controller.dart';
+import 'package:youtube_dl/controllers/src/download_controller.dart';
 import 'package:youtube_dl/controllers/src/play_controller.dart';
+import 'package:youtube_dl/controllers/src/play_list_controller.dart';
+import 'package:youtube_dl/models/download_snapshot.dart';
 import 'package:youtube_dl/models/search_result.dart';
 import 'package:youtube_dl/repos/search_repo/src/search_impl.dart';
 import 'package:youtube_dl/use_cases/search_use_case/search_use_case.dart';
 
 class SearchViewModel {
+  SearchViewModel(this.searchTag) {
+    init();
+  }
+
+  final String searchTag;
   late SearchUseCase _useCase;
   final Rx<ConnectionState> _state = ConnectionState.none.obs;
-  final DownController _downController = DownController.find();
+  final DownloadController _downController = DownloadController.find();
 
   ConnectionState get state => _state.value;
 
@@ -20,6 +27,20 @@ class SearchViewModel {
   void init() async {
     _useCase = SearchUseCase(SearchImpl());
     _loading(false);
+    await Future.delayed(const Duration(milliseconds: 300));
+    showAppBar();
+  }
+
+  final RxDouble _appBarOpacity = 0.0.obs;
+
+  double get appBarOpacity => _appBarOpacity.value;
+
+  void showAppBar() {
+    _appBarOpacity(1);
+  }
+
+  void hideAppBar() {
+    _appBarOpacity(0);
   }
 
   final TextEditingController searchController = TextEditingController();
@@ -46,24 +67,32 @@ class SearchViewModel {
     _state(ConnectionState.done);
   }
 
-  double? progress(String videoId) {
-    if (_downController.dlList
-        .map((element) => element.videoId)
-        .contains(videoId)) {
-      return 1;
+  DownloadSnapshot snapshot(String videoId) {
+    if (_downController.isContains(videoId)) {
+      return DownloadSnapshot.done();
     }
-    return _downController.progressMap[videoId];
+    return _downController.snapshot(videoId);
   }
 
+  void onTapClose() {
+    hideAppBar();
+    Get.back();
+  }
+
+  // final PlayListController _playListController = PlayListController.find();
   final PlayController _playController = PlayController.find();
 
   Future<void> onTapDown(ResultItem item) async {
     final _tmpDl = item.toYoutubeDl;
     await _downController.downAudio(_tmpDl);
-    await _playController.addPlayList(0, _tmpDl.videoId);
+    await _playController.addItem(_tmpDl.videoId);
   }
 
-  void onTapPlay(ResultItem item) {}
+
+  Future<void> onTapPlay(ResultItem item) async {
+    await _playController.setYoutubeDl(item.toYoutubeDl);
+    await _playController.play();
+  }
 
   void onTapStop(ResultItem item) {
     _downController.stopDownloadAudio(item.videoId);

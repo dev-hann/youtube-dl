@@ -1,5 +1,5 @@
 import 'package:just_audio/just_audio.dart';
-import 'package:youtube_dl/models/play_list.dart';
+import 'package:youtube_dl/enums/play_repeat_state.dart';
 import 'package:youtube_dl/models/youtube_dl.dart';
 
 abstract class PlayRepo {
@@ -13,7 +13,7 @@ abstract class PlayRepo {
 
   Future initPlayer();
 
-  Future setYoutubeDl(YoutubeDl dl);
+  Future setPlayList(List<String> videoIdList);
 
   Future play();
 
@@ -23,11 +23,5 @@ abstract class PlayRepo {
 
   Future seek(int milSec);
 
-  /// playList
-  Future initPlayList();
-
-  List<PlayList> loadPlayList();
-
-  Future updatePlayList(PlayList playList);
-
+  Future setRepeatMode(PlayRepeatState repeatState);
 }

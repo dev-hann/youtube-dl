@@ -1,5 +1,7 @@
 import 'package:dio/dio.dart';
+import 'package:youtube_dl/enums/download_state.dart';
 import 'package:youtube_dl/models/youtube_dl.dart';
+typedef ProgressState = Function(DownloadState state,double progress);
 
 abstract class DownRepo {
   Future initRepo();
@@ -8,7 +10,7 @@ abstract class DownRepo {
 
   Future removeAudio(YoutubeDl dl);
 
-  Future downloadAudio(YoutubeDl dl, ProgressCallback onReceiveProgress);
+  Future<bool> downloadAudio(YoutubeDl dl, ProgressState progressState);
 
   Future downloadHeadPhoto(String url, String path);
 

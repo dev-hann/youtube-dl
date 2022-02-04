@@ -96,12 +96,30 @@ class YoutubeAudioHandler extends BaseAudioHandler {
 
   Stream<Duration?> get durationStream => _player.durationStream;
 
+  @override
+  Future<void> addQueueItems(List<MediaItem> mediaItems) async {
+    queue.add(mediaItems);
+    await _player.setAudioSource(
+      ConcatenatingAudioSource(
+        children:
+            mediaItems.map((e) => AudioSource.uri(Uri.file(e.id))).toList(),
+      ),
+      initialIndex: 0,
+      initialPosition: Duration.zero,
+    );
+    return super.addQueueItems(mediaItems);
+  }
+
+  @override
+  Future<void> playMediaItem(MediaItem mediaItem) async {
+    await _player.setFilePath(mediaItem.id);
+    return super.playMediaItem(mediaItem);
+  }
 
   @override
   Future<void> addQueueItem(MediaItem mediaItem) async {
     await stop();
     queue.add([mediaItem]);
-    await _player.setFilePath(mediaItem.id);
   }
 
   @override
@@ -125,5 +143,26 @@ class YoutubeAudioHandler extends BaseAudioHandler {
   @override
   Future<void> seek(Duration position) async {
     await _player.seek(position);
+  }
+
+  @override
+  Future<void> setRepeatMode(AudioServiceRepeatMode repeatMode) async {
+    LoopMode _mode;
+    switch (repeatMode) {
+      case AudioServiceRepeatMode.none:
+        _mode = LoopMode.off;
+        break;
+      case AudioServiceRepeatMode.one:
+        _mode = LoopMode.one;
+        break;
+      case AudioServiceRepeatMode.all:
+        _mode = LoopMode.all;
+        break;
+      case AudioServiceRepeatMode.group:
+        _mode = LoopMode.off;
+        break;
+    }
+    await _player.setLoopMode(_mode);
+    return super.setRepeatMode(repeatMode);
   }
 }

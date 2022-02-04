@@ -7,6 +7,7 @@ class YoutubeDl extends Youtube {
     required DateTime publishedAt,
     required String title,
     required String description,
+    required Duration? duration,
     this.path,
     this.headPhotoPath,
   }) : super(
@@ -14,6 +15,7 @@ class YoutubeDl extends Youtube {
           publishedAt: publishedAt,
           title: title,
           description: description,
+          duration: duration,
         );
 
   String? path;
@@ -28,12 +30,12 @@ class YoutubeDl extends Youtube {
       'description': description,
       'path': path,
       'headPhotoPath': headPhotoPath,
+      'duration': duration.inSeconds,
     };
   }
 
   factory YoutubeDl.fromMap(dynamic _map) {
     Map<String, dynamic> map = Map<String, dynamic>.from(_map);
-
     return YoutubeDl(
       videoId: map['videoId'] as String,
       publishedAt: map['publishedAt'] as DateTime,
@@ -41,12 +43,15 @@ class YoutubeDl extends Youtube {
       description: map['description'] as String,
       path: map['path'] as String,
       headPhotoPath: map['headPhotoPath'] as String,
+      duration: map['duration'] == null
+          ? Duration.zero
+          : Duration(seconds: map['duration']),
     );
   }
 }
 
 extension Mapper on YoutubeDl {
-  MediaItem get toMediaItem {
+  MediaItem get mediaItem {
     return MediaItem(
       id: path!,
       title: title,

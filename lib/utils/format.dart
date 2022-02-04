@@ -9,4 +9,9 @@ class Format {
     }
     return "$twoDigitHours:$twoDigitMinutes:$twoDigitSeconds";
   }
+
+  static String headPhotoDuration(Duration duration){
+    return playerDuration(duration);
+  }
+
 }

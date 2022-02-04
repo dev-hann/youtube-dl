@@ -1,8 +1,10 @@
 import 'dart:async';
 
+import 'package:audio_service/audio_service.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:youtube_dl/database/src/down_box.dart';
 import 'package:youtube_dl/database/src/play_list_box.dart';
+import 'package:youtube_dl/enums/play_repeat_state.dart';
 import 'package:youtube_dl/models/play_list.dart';
 import 'package:youtube_dl/models/youtube_dl.dart';
 import 'package:youtube_dl/repos/play_repo/play_repo.dart';
@@ -32,8 +34,15 @@ class PlayImpl extends PlayRepo {
   }
 
   @override
-  Future setYoutubeDl(YoutubeDl dl) async {
-    await _handler.addQueueItem(dl.toMediaItem);
+  Future setPlayList(List<String> videoIdList) async {
+    final _list = _box.loadDownList().map((e) => YoutubeDl.fromMap(e)).toList();
+    final _res = <MediaItem>[];
+    for (final id in videoIdList) {
+      final index = _list.indexWhere((element) => element.videoId == id);
+      if (index == -1) continue;
+      _res.add(_list[index].mediaItem);
+    }
+    await _handler.addQueueItems(_res);
   }
 
   @override
@@ -56,22 +65,9 @@ class PlayImpl extends PlayRepo {
     await _handler.seek(Duration(milliseconds: milSec));
   }
 
-  /// playList
-  ///
-  final PlayListBox _playListBox = PlayListBox();
-
   @override
-  Future initPlayList() async {
-    await _playListBox.openBox();
-  }
-
-  @override
-  List<PlayList> loadPlayList() {
-    return _playListBox.loadPlayList().map((e) => PlayList.fromMap(e)).toList();
-  }
-
-  @override
-  Future updatePlayList(PlayList playList) async {
-    _playListBox.updatePlayList(playList.index, playList.toMap());
+  Future setRepeatMode(PlayRepeatState repeatState) async {
+    await _handler
+        .setRepeatMode(AudioServiceRepeatMode.values[repeatState.index]);
   }
 }

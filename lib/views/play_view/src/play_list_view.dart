@@ -1,90 +1,103 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ionicons/ionicons.dart';
-import 'package:youtube_dl/views/mini_play_view/mini_play_view.dart';
 import 'package:youtube_dl/views/play_view/src/play_card_view.dart';
-
+import 'package:youtube_dl/widget/dl_image/src/dl_background_photo.dart';
 import 'play_list_view_model.dart';
 
 class PlayListView extends StatelessWidget {
   PlayListView({Key? key}) : super(key: key);
+
+  static goToPlayListView() {
+    Get.to(
+      () => PlayListView(),
+      transition: Transition.downToUp,
+    );
+  }
+
   final PlayListViewModel _viewModel = PlayListViewModel();
 
   AppBar _appBar() {
     return AppBar(
       elevation: 0,
       backgroundColor: Colors.transparent,
-      title: const Text(
+      title: Text(
         "PlayList",
-        style: TextStyle(color: Colors.black),
+        style: Get.textTheme.headline2!.copyWith(color: Colors.white),
       ),
       automaticallyImplyLeading: false,
       actions: [
         IconButton(
           onPressed: Get.back,
-          icon: const Icon(
-            Ionicons.close,
-            color: Colors.black,
-          ),
+          icon: const Icon(Icons.close),
         )
       ],
     );
   }
 
   Widget _listView() {
-    return Obx(() {
-      return ReorderableListView.builder(
-        physics: const BouncingScrollPhysics(
-          parent: AlwaysScrollableScrollPhysics(),
-        ),
-        itemCount: _viewModel.selectedList.length,
-        itemBuilder: (_, index) {
-          final item = _viewModel.selectedList[index];
-          return Dismissible(
-            direction: DismissDirection.endToStart,
-            onDismissed: _viewModel.onDelete,
-            confirmDismiss: _viewModel.confirmDelete,
-            background: const ColoredBox(
-              color: Colors.redAccent,
-              child: Align(
-                alignment: Alignment.centerRight,
-                child: Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child: Text(
-                    "Delete",
-                    style: TextStyle(color: Colors.white),
-                  ),
+    return ReorderableListView.builder(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+      physics: const BouncingScrollPhysics(
+        parent: AlwaysScrollableScrollPhysics(),
+      ),
+      itemCount: _viewModel.dlList.length,
+      itemBuilder: (_, index) {
+        final item = _viewModel.dlList[index];
+        return Dismissible(
+          key: ValueKey(index),
+          direction: DismissDirection.endToStart,
+          onDismissed: (_) {
+            _viewModel.onDelete(index);
+          },
+          confirmDismiss: _viewModel.confirmDelete,
+          background: const ColoredBox(
+            color: Colors.redAccent,
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Text(
+                  "Delete",
+                  style: TextStyle(color: Colors.white),
                 ),
               ),
             ),
-            key: ValueKey(index),
-            child: GestureDetector(
-              onTap: () {
-                _viewModel.onTapItem(item);
-              },
-              child: Card(
+          ),
+          child: GestureDetector(
+            onTap: () {
+              _viewModel.onTapItem(item);
+            },
+            child: Card(
+              color: Colors.transparent,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 8,
+                  vertical: 4,
+                ),
                 child: PlayCardView(
                   item: item,
                   onTapPlay: (item) {},
                 ),
               ),
             ),
-          );
-        },
-        onReorder: (oldIndex, newIndex) {
-          print(oldIndex);
-          print(newIndex);
-        },
-      );
-    });
+          ),
+        );
+      },
+      onReorder: _viewModel.onReorder,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: _appBar(),
-      body: _listView(),
-      bottomNavigationBar: MiniPlayView(),
-    );
+    return Obx(() {
+      return DlBackgroundPhoto(
+        dl: _viewModel.currentItem,
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          appBar: _appBar(),
+          body: _listView(),
+        ),
+      );
+    });
   }
 }
