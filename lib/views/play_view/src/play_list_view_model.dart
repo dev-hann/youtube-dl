@@ -1,20 +1,19 @@
-import 'package:youtube_dl/controllers/src/download_controller.dart';
-import 'package:youtube_dl/controllers/src/play_controller.dart';
-import 'package:youtube_dl/controllers/src/play_list_controller.dart';
+import 'package:youtube_dl/controllers/src/audio_controller.dart';
+import 'package:youtube_dl/controllers/src/youtube_controller.dart';
 import 'package:youtube_dl/models/play_list.dart';
 import 'package:youtube_dl/models/youtube_dl.dart';
 
 class PlayListViewModel {
 
-  final PlayController playController = PlayController.find();
+  final AudioController audioController = AudioController.find();
 
-  YoutubeDl? get currentItem => playController.currentItem;
+  YoutubeDl? get currentItem => audioController.currentItem;
 
-  final DownloadController downController = DownloadController.find();
+  final YoutubeController downController = YoutubeController.find();
 
   // final PlayListController playListController = PlayListController.find();
 
-  PlayList get playList => playController.playList;
+  PlayList get playList => audioController.playList;
 
   List<YoutubeDl> get dlList {
     return downController.findItemList(playList.videoIdList);
@@ -27,13 +26,13 @@ class PlayListViewModel {
 
   void onDelete(int index) async {
     final _item = dlList[index];
-    if (playController.isPlaying) {
-      if (playController.currentItem == _item) {
-        await playController.stop();
-        playController.clearCurrentDl();
+    if (audioController.isPlaying) {
+      if (audioController.currentItem == _item) {
+        await audioController.stop();
+        audioController.clearCurrentDl();
       }
     }
-    await playController.removeItem(_item.videoId);
+    await audioController.removeItem(_item.videoId);
     await downController.removeItem(_item);
   }
 
@@ -43,15 +42,15 @@ class PlayListViewModel {
     }
     final item = dlList.removeAt(oldIndex);
     dlList.insert(newIndex, item);
-    await playController.reorderPlayList(oldIndex, newIndex);
-    playController.refreshCurrentPage(
-      playController.isPlaying,
-      playController.currentItem,
+    await audioController.reorderPlayList(oldIndex, newIndex);
+    audioController.refreshCurrentPage(
+      audioController.isPlaying,
+      audioController.currentItem,
     );
   }
 
   void onTapItem(YoutubeDl dl) async {
-    await playController.setYoutubeDl(dl);
-    await playController.play();
+    await audioController.setYoutubeDl(dl);
+    await audioController.play();
   }
 }

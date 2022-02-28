@@ -10,8 +10,8 @@ import 'package:youtube_dl/repos/play_repo/src/play_impl.dart';
 import 'package:youtube_dl/use_cases/play_list_use_case/play_list_use_case.dart';
 import 'package:youtube_dl/use_cases/play_use_case/play_use_case.dart';
 
-class PlayController extends GetxService {
-  static PlayController find() => Get.find<PlayController>();
+class AudioController extends GetxService {
+  static AudioController find() => Get.find<AudioController>();
 
   late PlayUseCase _playUseCase;
 
