@@ -6,8 +6,8 @@ import 'package:youtube_dl/database/src/down_box.dart';
 import 'package:youtube_dl/enums/download_state.dart';
 import 'package:youtube_dl/models/youtube_dl.dart';
 import 'package:youtube_dl/repos/down_repo/down_repo.dart';
-import 'package:youtube_dl/services/down_service/down_service.dart';
-import 'package:youtube_dl/services/firebase_service/firebase_service.dart';
+import 'package:youtube_dl/services/src/down_service.dart';
+import 'package:youtube_dl/services/src/firebase_service.dart';
 
 class DownImpl extends DownRepo {
   final FirebaseService _firebaseService = FirebaseService();

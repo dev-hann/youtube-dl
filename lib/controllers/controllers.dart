@@ -1,11 +1,9 @@
 import 'package:get/get.dart';
 
-import 'src/download_controller.dart';
-import 'src/play_controller.dart';
-import 'src/play_list_controller.dart';
+import 'src/youtube_controller.dart';
+import 'src/audio_controller.dart';
 
 void initControllers() {
-  Get.lazyPut(() => DownloadController());
-  Get.lazyPut(() => PlayController());
-  // Get.lazyPut(() => PlayListController());
+  Get.lazyPut(() => YoutubeController());
+  Get.lazyPut(() => AudioController());
 }

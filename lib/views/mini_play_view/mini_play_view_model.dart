@@ -1,21 +1,21 @@
-import 'package:youtube_dl/controllers/src/play_controller.dart';
+import 'package:youtube_dl/controllers/src/audio_controller.dart';
 import 'package:youtube_dl/models/youtube_dl.dart';
 import 'package:youtube_dl/views/play_view/src/play_list_view.dart';
 
 class MiniPlayViewModel {
-  final PlayController _playController = PlayController.find();
+  final AudioController audioController = AudioController.find();
 
 
-  YoutubeDl? get currentItem => _playController.currentItem;
+  YoutubeDl? get currentItem => audioController.currentItem;
 
-  bool get isPlaying => _playController.isPlaying;
+  bool get isPlaying => audioController.isPlaying;
 
   double get progress =>
-      _playController.position.inMilliseconds /
-      _playController.duration.inMilliseconds;
+      audioController.position.inMilliseconds /
+      audioController.duration.inMilliseconds;
 
   void onTapPlayButton() {
-    _playController.playToggle();
+    audioController.playToggle();
   }
 
   void onTapListView() {
@@ -23,11 +23,11 @@ class MiniPlayViewModel {
   }
 
   Future onTapForward() async {
-    await _playController.forward();
+    await audioController.forward();
   }
 
   Future onTapBackward() async {
-    await _playController.backward();
+    await audioController.backward();
   }
 
 }

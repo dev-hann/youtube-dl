@@ -1,8 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
-import 'package:youtube_dl/controllers/src/download_controller.dart';
-import 'package:youtube_dl/controllers/src/play_controller.dart';
-import 'package:youtube_dl/controllers/src/play_list_controller.dart';
+import 'package:youtube_dl/controllers/src/audio_controller.dart';
+import 'package:youtube_dl/controllers/src/youtube_controller.dart';
 import 'package:youtube_dl/models/download_snapshot.dart';
 import 'package:youtube_dl/models/search_result.dart';
 import 'package:youtube_dl/repos/search_repo/src/search_impl.dart';
@@ -16,7 +15,7 @@ class SearchViewModel {
   final String searchTag;
   late SearchUseCase _useCase;
   final Rx<ConnectionState> _state = ConnectionState.none.obs;
-  final DownloadController _downController = DownloadController.find();
+  final YoutubeController _downController = YoutubeController.find();
 
   ConnectionState get state => _state.value;
 
@@ -79,19 +78,17 @@ class SearchViewModel {
     Get.back();
   }
 
-  // final PlayListController _playListController = PlayListController.find();
-  final PlayController _playController = PlayController.find();
+  final AudioController audioController = AudioController.find();
 
   Future<void> onTapDown(ResultItem item) async {
     final _tmpDl = item.toYoutubeDl;
     await _downController.downAudio(_tmpDl);
-    await _playController.addItem(_tmpDl.videoId);
+    await audioController.addItem(_tmpDl.videoId);
   }
 
-
   Future<void> onTapPlay(ResultItem item) async {
-    await _playController.setYoutubeDl(item.toYoutubeDl);
-    await _playController.play();
+    await audioController.setYoutubeDl(item.toYoutubeDl);
+    await audioController.play();
   }
 
   void onTapStop(ResultItem item) {

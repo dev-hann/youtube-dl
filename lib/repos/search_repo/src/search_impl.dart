@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:youtube_dl/services/search_service/search_service.dart';
+import 'package:youtube_dl/services/src/search_service.dart';
 
 import '../search_repo.dart';
 

@@ -4,8 +4,8 @@ import 'package:youtube_dl/models/youtube_dl.dart';
 import 'package:youtube_dl/repos/down_repo/src/down_impl.dart';
 import 'package:youtube_dl/use_cases/down_use_case/down_use_case.dart';
 
-class DownloadController extends GetxService {
-  static DownloadController find() => Get.find<DownloadController>();
+class YoutubeController extends GetxService {
+  static YoutubeController find() => Get.find<YoutubeController>();
 
   late DownUseCase _useCase;
 
