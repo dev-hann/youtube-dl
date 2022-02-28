@@ -18,7 +18,7 @@ class AutoSlideWidget extends StatefulWidget {
 }
 
 class _AutoSlideWidgetState extends State<AutoSlideWidget>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin ,AutomaticKeepAliveClientMixin{
   late AnimationController _animationController;
   final ScrollController _scrollController = ScrollController();
 
@@ -40,6 +40,7 @@ class _AutoSlideWidgetState extends State<AutoSlideWidget>
       });
     }
   }
+
 
   double computeTextWidth() {
     TextPainter _tp = TextPainter(
@@ -71,18 +72,23 @@ class _AutoSlideWidgetState extends State<AutoSlideWidget>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     if (!widget.enable) return widget.child;
     return SingleChildScrollView(
       controller: _scrollController,
       scrollDirection: widget.scrollDirection,
       child: Row(
         children: List.filled(
-            10,
-            Padding(
-              padding: const EdgeInsets.only(right: 40),
-              child: widget.child,
-            )),
+          10,
+          Padding(
+            padding: const EdgeInsets.only(right: 40),
+            child: widget.child,
+          ),
+        ),
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

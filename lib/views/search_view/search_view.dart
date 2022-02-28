@@ -49,6 +49,7 @@ class SearchView extends StatelessWidget {
   Widget _body() {
     Widget _listView() {
       return ListView.builder(
+        physics: const BouncingScrollPhysics(),
         padding: const EdgeInsets.symmetric(vertical: 16),
         itemCount: _viewModel.items.length,
         itemBuilder: (_, index) {
@@ -82,13 +83,13 @@ class SearchView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: _appBar(),
-      body: GestureDetector(
-        onTap: () {
-          FocusScope.of(context).requestFocus(FocusNode());
-        },
-        child: Padding(
+    return GestureDetector(
+      onTap: () {
+        FocusManager.instance.primaryFocus!.unfocus();
+      },
+      child: Scaffold(
+        appBar: _appBar(),
+        body: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
