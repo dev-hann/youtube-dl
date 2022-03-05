@@ -28,7 +28,7 @@ class MiniPlayView extends StatelessWidget {
           MiniPlayListTile(
             background: DlBlackColor,
             dl: _viewModel.currentItem!,
-            playState: _viewModel.isPlaying,
+            isPlaying: _viewModel.isPlaying,
             onTapPlay: _viewModel.onTapPlayButton,
             onTapListView: _viewModel.onTapListView,
             onTapBackward: _viewModel.onTapBackward,

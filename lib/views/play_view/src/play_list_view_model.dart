@@ -1,17 +1,15 @@
+import 'package:get/get.dart';
 import 'package:youtube_dl/controllers/src/audio_controller.dart';
 import 'package:youtube_dl/controllers/src/youtube_controller.dart';
 import 'package:youtube_dl/models/play_list.dart';
 import 'package:youtube_dl/models/youtube_dl.dart';
 
 class PlayListViewModel {
-
   final AudioController audioController = AudioController.find();
 
   YoutubeDl? get currentItem => audioController.currentItem;
 
   final YoutubeController downController = YoutubeController.find();
-
-  // final PlayListController playListController = PlayListController.find();
 
   PlayList get playList => audioController.playList;
 
@@ -19,21 +17,13 @@ class PlayListViewModel {
     return downController.findItemList(playList.videoIdList);
   }
 
+  bool isPlaying(YoutubeDl item) {
+    return audioController.currentItem == item;
+  }
+
   Future<bool> confirmDelete(_) async {
     /// need delete alert to check
     return true;
-  }
-
-  void onDelete(int index) async {
-    final _item = dlList[index];
-    if (audioController.isPlaying) {
-      if (audioController.currentItem == _item) {
-        await audioController.stop();
-        audioController.clearCurrentDl();
-      }
-    }
-    await audioController.removeItem(_item.videoId);
-    await downController.removeItem(_item);
   }
 
   Future<void> onReorder(int oldIndex, int newIndex) async {
@@ -52,5 +42,20 @@ class PlayListViewModel {
   void onTapItem(YoutubeDl dl) async {
     await audioController.setYoutubeDl(dl);
     await audioController.play();
+  }
+
+  void onTapMore(YoutubeDl dl){
+    _removeItem(dl);
+  }
+
+  void _removeItem(YoutubeDl item) async {
+    if (audioController.isPlaying) {
+      if (audioController.currentItem == item) {
+        await audioController.stop();
+        audioController.clearCurrentDl();
+      }
+    }
+    await audioController.removeItem(item.videoId);
+    await downController.removeItem(item);
   }
 }

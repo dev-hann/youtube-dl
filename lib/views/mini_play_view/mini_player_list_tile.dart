@@ -8,25 +8,25 @@ class MiniPlayListTile extends YoutubeListTile<YoutubeDl> {
   const MiniPlayListTile({
     Key? key,
     required YoutubeDl dl,
-    required this.playState,
+    required this.isPlaying,
     required this.onTapPlay,
     required this.onTapListView,
     required this.onTapForward,
     required this.onTapBackward,
     this.background,
+    
   }) : super(
           key: key,
           item: dl,
           showDuration: false,
         );
 
-  final bool playState;
+  final bool isPlaying;
   final VoidCallback onTapPlay;
   final VoidCallback onTapListView;
   final VoidCallback onTapForward;
   final VoidCallback onTapBackward;
   final Color? background;
-
   @override
   Widget? headPhoto() {
     return IconTheme(
@@ -51,7 +51,7 @@ class MiniPlayListTile extends YoutubeListTile<YoutubeDl> {
 
   Widget _play() {
     return PlayerIcons.playPause(
-      state: playState,
+      state: isPlaying,
       onTap: onTapPlay,
     );
   }

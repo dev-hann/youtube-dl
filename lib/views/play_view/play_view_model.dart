@@ -68,10 +68,10 @@ class PlayViewModel {
     _currentPage(page);
     if (reason == CarouselPageChangedReason.controller) return;
     final _isPlaying = audioController.isPlaying;
-
     await audioController.stop();
     await audioController.setYoutubeDl(currentItem!);
     if (_isPlaying) {
+      print(_isPlaying);
       await audioController.play();
     }
   }

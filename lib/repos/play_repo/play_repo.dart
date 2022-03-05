@@ -15,6 +15,8 @@ abstract class PlayRepo {
 
   Future setPlayList(List<String> videoIdList);
 
+  Future setPlayItem(YoutubeDl dl);
+
   Future play();
 
   Future pause();

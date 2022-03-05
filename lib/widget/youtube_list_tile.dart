@@ -55,15 +55,15 @@ abstract class YoutubeListTile<T extends Youtube> extends StatelessWidget {
 
   bool get titleAnimate;
 
+  TextStyle get titleTextStyle => const TextStyle(color: DlWhiteColor);
+
   Widget title(String title) {
     return AutoSlideWidget(
       enable: titleAnimate,
       child: Text(
         title,
         maxLines: 1,
-        style: const TextStyle(
-          color: DlWhiteColor,
-        ),
+        style: titleTextStyle,
       ),
     );
   }
