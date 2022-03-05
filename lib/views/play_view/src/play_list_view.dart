@@ -35,35 +35,17 @@ class PlayListView extends StatelessWidget {
   }
 
   Widget _listView() {
-    return ReorderableListView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-      physics: const BouncingScrollPhysics(
-        parent: AlwaysScrollableScrollPhysics(),
-      ),
-      itemCount: _viewModel.dlList.length,
-      itemBuilder: (_, index) {
-        final item = _viewModel.dlList[index];
-        return Dismissible(
-          key: ValueKey(index),
-          direction: DismissDirection.endToStart,
-          onDismissed: (_) {
-            _viewModel.onDelete(index);
-          },
-          confirmDismiss: _viewModel.confirmDelete,
-          background: const ColoredBox(
-            color: Colors.redAccent,
-            child: Align(
-              alignment: Alignment.centerRight,
-              child: Padding(
-                padding: EdgeInsets.all(16.0),
-                child: Text(
-                  "Delete",
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
-            ),
-          ),
-          child: GestureDetector(
+    return Obx(() {
+      return ReorderableListView.builder(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+        physics: const BouncingScrollPhysics(
+          parent: AlwaysScrollableScrollPhysics(),
+        ),
+        itemCount: _viewModel.dlList.length,
+        itemBuilder: (_, index) {
+          final item = _viewModel.dlList[index];
+          return GestureDetector(
+            key: ValueKey(index),
             onTap: () {
               _viewModel.onTapItem(item);
             },
@@ -76,15 +58,16 @@ class PlayListView extends StatelessWidget {
                 ),
                 child: PlayCardView(
                   item: item,
-                  onTapPlay: (item) {},
+                  onTapMore: _viewModel.onTapMore,
+                  isPlaying: _viewModel.isPlaying(item),
                 ),
               ),
             ),
-          ),
-        );
-      },
-      onReorder: _viewModel.onReorder,
-    );
+          );
+        },
+        onReorder: _viewModel.onReorder,
+      );
+    });
   }
 
   @override

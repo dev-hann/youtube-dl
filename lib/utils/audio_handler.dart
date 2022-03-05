@@ -117,10 +117,17 @@ class YoutubeAudioHandler extends BaseAudioHandler {
   }
 
   @override
+  Future<void> prepareFromMediaId(String mediaId, [Map<String, dynamic>? extras]) async{
+    await _player.setFilePath(mediaId);
+    return super.prepareFromMediaId(mediaId);
+  }
+
+  @override
   Future<void> addQueueItem(MediaItem mediaItem) async {
     await stop();
     queue.add([mediaItem]);
   }
+
 
   @override
   Future<void> play() async {
@@ -135,9 +142,8 @@ class YoutubeAudioHandler extends BaseAudioHandler {
 
   @override
   Future<void> stop() async {
-    if (_player.playing) {
-      await _player.stop();
-    }
+    await _player.stop();
+    await _player.seek(Duration.zero);
   }
 
   @override

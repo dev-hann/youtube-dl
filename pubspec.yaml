@@ -21,7 +21,7 @@ dependencies:
   google_fonts: ^2.2.0
   #Audio
   just_audio: ^0.9.18
-  audio_service: ^0.18.3
+  audio_service: ^0.18.4
   #DB
   hive: ^2.0.5
   hive_flutter: ^1.1.0

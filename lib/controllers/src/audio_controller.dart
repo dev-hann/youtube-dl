@@ -67,10 +67,6 @@ class AudioController extends GetxService {
 
   void _initPositionListener() {
     _positionStreamSub = _playUseCase.positionStream.listen((event) {
-      // if (event == duration) {
-      //   //or loop
-      //   stop();
-      // }
       _position(event);
     });
   }
@@ -103,12 +99,12 @@ class AudioController extends GetxService {
 
   Future setYoutubeDl(YoutubeDl dl) async {
     _currentItem(dl);
-    // await _playUseCase.setYoutubeDl(dl);
+    await _playUseCase.setPlayItem(dl);
   }
 
   Future playToggle() async {
     if (isPlaying) {
-      stop();
+      pause();
     } else {
       play();
     }
@@ -199,7 +195,9 @@ class AudioController extends GetxService {
   }
 
   Future removeItem(String videoId) async {
-    playList.videoIdList.remove(videoId);
+    _playList.update((val) {
+      val!.videoIdList.remove(videoId);
+    });
     await _playListUseCase.updatePlayList(playList);
   }
 

@@ -46,6 +46,11 @@ class PlayImpl extends PlayRepo {
   }
 
   @override
+  Future setPlayItem(YoutubeDl dl) async {
+    await _handler.prepareFromMediaId(dl.path!);
+  }
+
+  @override
   Future play() async {
     await _handler.play();
   }

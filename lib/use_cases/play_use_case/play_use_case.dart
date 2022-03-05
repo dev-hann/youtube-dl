@@ -21,6 +21,11 @@ class PlayUseCase {
     await _repo.initPlayer();
   }
 
+
+  Future setPlayItem(YoutubeDl dl)async{
+    await _repo.setPlayItem(dl);
+  }
+
   Future play() async {
     await _repo.play();
   }
