@@ -10,11 +10,9 @@ class MiniPlayListTile extends YoutubeListTile<YoutubeDl> {
     required YoutubeDl dl,
     required this.isPlaying,
     required this.onTapPlay,
-    required this.onTapListView,
     required this.onTapForward,
     required this.onTapBackward,
     this.background,
-    
   }) : super(
           key: key,
           item: dl,
@@ -23,17 +21,15 @@ class MiniPlayListTile extends YoutubeListTile<YoutubeDl> {
 
   final bool isPlaying;
   final VoidCallback onTapPlay;
-  final VoidCallback onTapListView;
   final VoidCallback onTapForward;
   final VoidCallback onTapBackward;
   final Color? background;
+
   @override
   Widget? headPhoto() {
     return IconTheme(
       data: Get.theme.iconTheme,
-      child: PlayerIcons.playList(
-        onTap: onTapListView,
-      ),
+      child: PlayerIcons.playList(),
     );
   }
 

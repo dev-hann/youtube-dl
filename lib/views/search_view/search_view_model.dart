@@ -13,6 +13,9 @@ class SearchViewModel {
   }
 
   final String searchTag;
+
+  String get searchHintText => "검색어를 입력하세요";
+
   late SearchUseCase _useCase;
   final Rx<ConnectionState> _state = ConnectionState.none.obs;
   final YoutubeController _downController = YoutubeController.find();
