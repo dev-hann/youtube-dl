@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:carousel_slider/carousel_controller.dart';
 import 'package:carousel_slider/carousel_options.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:youtube_dl/controllers/src/audio_controller.dart';
 import 'package:youtube_dl/controllers/src/youtube_controller.dart';
@@ -34,6 +35,15 @@ class PlayViewModel {
             audioController.duration.inMilliseconds)
         .clamp(0, 1);
   }
+
+  TextStyle get progressTextStyle {
+    if (_seekMode.value) {
+      return Get.textTheme.subtitle1!;
+    }
+    return Get.textTheme.bodyText2!;
+  }
+
+  Duration get textStyleDuration => const Duration(milliseconds: 100);
 
   String get positionText {
     if (!_seekMode.value) {
@@ -71,7 +81,6 @@ class PlayViewModel {
     await audioController.stop();
     await audioController.setYoutubeDl(currentItem!);
     if (_isPlaying) {
-      print(_isPlaying);
       await audioController.play();
     }
   }
@@ -121,7 +130,10 @@ class PlayViewModel {
   }
 
   void onTapPlayList() {
-    PlayListView.goToPlayListView();
+    Get.to(
+      () => PlayListView(),
+      transition: Transition.downToUp,
+    );
   }
 
   Future onTapForward() async {

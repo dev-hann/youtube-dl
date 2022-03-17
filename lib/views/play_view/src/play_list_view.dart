@@ -7,13 +7,6 @@ import 'play_list_view_model.dart';
 class PlayListView extends StatelessWidget {
   PlayListView({Key? key}) : super(key: key);
 
-  static goToPlayListView() {
-    Get.to(
-      () => PlayListView(),
-      transition: Transition.downToUp,
-    );
-  }
-
   final PlayListViewModel _viewModel = PlayListViewModel();
 
   AppBar _appBar() {

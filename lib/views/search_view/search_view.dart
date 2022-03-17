@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:youtube_dl/const/color.dart';
 import 'search_view_model.dart';
 import 'src/search_card_view.dart';
 
@@ -25,6 +26,10 @@ class SearchView extends StatelessWidget {
           child: TextField(
             controller: _viewModel.searchController,
             focusNode: _viewModel.searchFocus,
+            decoration: InputDecoration(
+              hintText: _viewModel.searchHintText,
+              hintStyle: const TextStyle(color: DlGreyColor),
+            ),
             onSubmitted: (_) {
               _viewModel.onTapSearch();
             },

@@ -18,10 +18,6 @@ class MiniPlayViewModel {
     audioController.playToggle();
   }
 
-  void onTapListView() {
-    PlayListView.goToPlayListView();
-  }
-
   Future onTapForward() async {
     await audioController.forward();
   }

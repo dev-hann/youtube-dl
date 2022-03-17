@@ -77,11 +77,23 @@ class _PlayViewState extends State<PlayView>
     }
 
     Widget _position() {
-      return Text(_viewModel.positionText);
+      return Obx(() {
+        return AnimatedDefaultTextStyle(
+          style: _viewModel.progressTextStyle,
+          duration: _viewModel.textStyleDuration,
+          child: Text(_viewModel.positionText),
+        );
+      });
     }
 
     Widget _duration() {
-      return Text(_viewModel.durationText);
+      return Obx(() {
+        return AnimatedDefaultTextStyle(
+          style: _viewModel.progressTextStyle,
+          duration: _viewModel.textStyleDuration,
+          child: Text(_viewModel.durationText),
+        );
+      });
     }
 
     return Obx(() {

@@ -30,7 +30,6 @@ class MiniPlayView extends StatelessWidget {
             dl: _viewModel.currentItem!,
             isPlaying: _viewModel.isPlaying,
             onTapPlay: _viewModel.onTapPlayButton,
-            onTapListView: _viewModel.onTapListView,
             onTapBackward: _viewModel.onTapBackward,
             onTapForward: _viewModel.onTapForward,
           ),

@@ -21,19 +21,19 @@ class _HomeViewState extends State<HomeView>
       elevation: 0,
       centerTitle: true,
       title: const Text("JYPlayer"),
-      leading: GestureDetector(
-        onTap: _viewModel.onTapLeading,
-        child: const Icon(
-          Icons.list,
-          // color: Colors.black,
+      leading: IconButton(
+        onPressed: _viewModel.onTapSearch,
+        icon: Hero(
+          tag: _viewModel.searchTag,
+          child: const Icon(Icons.search),
         ),
       ),
       actions: [
         IconButton(
-          onPressed: _viewModel.onTapSearch,
-          icon: Hero(
-            tag: _viewModel.searchTag,
-            child: const Icon(Icons.search),
+          onPressed: _viewModel.onTapLeading,
+          icon: const Icon(
+            Icons.settings,
+            // color: Colors.black,
           ),
         ),
       ],
@@ -104,13 +104,20 @@ class _HomeViewState extends State<HomeView>
     );
   }
 
+  Widget _bottom() {
+    return GestureDetector(
+      onTap: _viewModel.onTapBottom,
+      child: MiniPlayView(),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
     return Scaffold(
       key: _viewModel.scaffoldKey,
       appBar: _appBar(),
-      bottomNavigationBar: MiniPlayView(),
+      bottomNavigationBar: _bottom(),
       drawer: _drawer(),
     );
   }
