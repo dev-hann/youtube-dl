@@ -10,7 +10,7 @@ class DownService extends YoutubeConnection {
   final String baseURL;
 
   String _getAudioURL(String videoId) {
-    return baseURL + "/audio/$videoId";
+    return baseURL + "/v1/audio/$videoId";
   }
   ///fix here!! to divide each process
   Future<DownloadResponse> youtubeRawURL(String videoId) async {
