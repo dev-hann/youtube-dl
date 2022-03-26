@@ -2,7 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:youtube_dl/controllers/src/audio_controller.dart';
 import 'package:youtube_dl/controllers/src/youtube_controller.dart';
-import 'package:youtube_dl/models/download_snapshot.dart';
+import 'package:youtube_dl/models/dl_snapshot.dart';
 import 'package:youtube_dl/models/search_result.dart';
 import 'package:youtube_dl/repos/search_repo/src/search_impl.dart';
 import 'package:youtube_dl/use_cases/search_use_case/search_use_case.dart';
@@ -69,9 +69,9 @@ class SearchViewModel {
     _state(ConnectionState.done);
   }
 
-  DownloadSnapshot snapshot(String videoId) {
+  DlSnapshot snapshot(String videoId) {
     if (_downController.isContains(videoId)) {
-      return DownloadSnapshot.done();
+      return DlSnapshot.done();
     }
     return _downController.snapshot(videoId);
   }

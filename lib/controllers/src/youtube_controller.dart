@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:youtube_dl/models/download_snapshot.dart';
+import 'package:youtube_dl/models/dl_snapshot.dart';
 import 'package:youtube_dl/models/youtube_dl.dart';
 import 'package:youtube_dl/repos/down_repo/src/down_impl.dart';
 import 'package:youtube_dl/use_cases/down_use_case/down_use_case.dart';
@@ -46,19 +46,19 @@ class YoutubeController extends GetxService {
     _loading(false);
   }
 
-  final RxMap<String, DownloadSnapshot> _snapshotMap =
-      <String, DownloadSnapshot>{}.obs;
+  final RxMap<String, DlSnapshot> _snapshotMap =
+      <String, DlSnapshot>{}.obs;
 
-  DownloadSnapshot snapshot(String videoId) {
-    return _snapshotMap[videoId] ?? DownloadSnapshot();
+  DlSnapshot snapshot(String videoId) {
+    return _snapshotMap[videoId] ?? DlSnapshot();
   }
 
   Future downAudio(YoutubeDl dl) async {
-    _snapshotMap[dl.videoId] = DownloadSnapshot();
+    _snapshotMap[dl.videoId] = DlSnapshot();
     final _res = await _useCase.downloadAudio(
       dl: dl,
       progressState: (state, progress) {
-        _snapshotMap[dl.videoId] = DownloadSnapshot(
+        _snapshotMap[dl.videoId] = DlSnapshot(
           state: state,
           progress: progress,
         );

@@ -1,7 +1,7 @@
 import 'package:youtube_dl/enums/download_state.dart';
 
-class DownloadSnapshot {
-  DownloadSnapshot({
+class DlSnapshot {
+  DlSnapshot({
     this.state = DownloadState.none,
     this.progress = 0,
   });
@@ -9,12 +9,12 @@ class DownloadSnapshot {
   DownloadState state;
   double progress;
 
-  factory DownloadSnapshot.none(){
-    return DownloadSnapshot(state: DownloadState.none,progress: 0);
+  factory DlSnapshot.none(){
+    return DlSnapshot(state: DownloadState.none,progress: 0);
   }
 
-  factory DownloadSnapshot.done(){
-    return DownloadSnapshot(state: DownloadState.done,progress: 1);
+  factory DlSnapshot.done(){
+    return DlSnapshot(state: DownloadState.done,progress: 1);
   }
 
   Map<String, dynamic> toMap() {
@@ -24,8 +24,8 @@ class DownloadSnapshot {
     };
   }
 
-  factory DownloadSnapshot.fromMap(Map<String, dynamic> map) {
-    return DownloadSnapshot(
+  factory DlSnapshot.fromMap(Map<String, dynamic> map) {
+    return DlSnapshot(
       state: map['state'] as DownloadState,
       progress: map['progress'] as double,
     );

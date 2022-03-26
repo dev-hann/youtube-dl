@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
-import 'package:youtube_dl/models/download_response.dart';
+import 'package:youtube_dl/models/dl_response.dart';
 import 'package:youtube_dl/services/services.dart';
 
 class DownService extends YoutubeConnection {
@@ -13,14 +13,14 @@ class DownService extends YoutubeConnection {
     return baseURL + "/v1/audio/$videoId";
   }
   ///fix here!! to divide each process
-  Future<DownloadResponse> youtubeRawURL(String videoId) async {
+  Future<DlResponse> youtubeRawURL(String videoId) async {
     final _address = _getAudioURL(videoId);
     final res = await get(_address);
-    return DownloadResponse.fromMap(jsonDecode(res.data));
+    return DlResponse.fromMap(jsonDecode(res.data));
   }
 
   Future<Response> downloadAudio(
-    DownloadResponse response,
+    DlResponse response,
     String savePath,
     ProgressCallback onReceiveProgress,
     CancelToken cancelToken,
