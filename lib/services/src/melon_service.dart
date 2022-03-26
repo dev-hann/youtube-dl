@@ -1,4 +1,4 @@
-import 'package:youtube_dl/models/download_response.dart';
+import 'package:youtube_dl/models/dl_response.dart';
 import 'package:youtube_dl/services/services.dart';
 
 class MelonService extends YoutubeConnection {
@@ -6,9 +6,8 @@ class MelonService extends YoutubeConnection {
 
   final String baseURL;
 
-  Future<DownloadResponse> loadMelon()async{
-    return ;
+  Future<DlResponse> loadMelonChart() async {
+    final _res = await get(baseURL);
+    return DlResponse.fromMap(_res);
   }
-
-
 }

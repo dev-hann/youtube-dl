@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:youtube_dl/enums/download_state.dart';
-import 'package:youtube_dl/models/download_snapshot.dart';
+import 'package:youtube_dl/models/dl_snapshot.dart';
 import 'package:youtube_dl/models/search_result.dart';
 import 'package:youtube_dl/widget/youtube_list_tile.dart';
 
@@ -16,7 +16,7 @@ class SearchCardView extends YoutubeListTile<ResultItem> {
   final Function(ResultItem item) onTapDown;
   final Function(ResultItem item) onTapPlay;
   final Function(ResultItem item) onTapStop;
-  final DownloadSnapshot snapshot;
+  final DlSnapshot snapshot;
 
   @override
   Widget trailing() {
