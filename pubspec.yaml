@@ -12,7 +12,7 @@ dependencies:
   flutter:
     sdk: flutter
   get:
-  dio:
+  dio: ^5.0.3
   firebase_core: ^1.11.0
   cloud_firestore:
   path_provider:
